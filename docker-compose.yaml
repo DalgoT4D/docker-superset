@@ -11,6 +11,8 @@ services:
     image: "ddp-superset:0.1"
     networks:
       - app-network
+    ports:
+      - 8088:8088
     depends_on:
       - db
       - superset_cache
@@ -18,7 +20,13 @@ services:
       sh -c  "celery --app=superset.tasks.celery_app:app worker --pool=prefork -O fair -c 4 &&
               celery --app=superset.tasks.celery_app:app beat &&
               celery --app=superset.tasks.celery_app:app flower
-              superset fab create-user 
+              superset fab create-admin --username admin \
+                                        --password ${SUPERSET_ADMIN_PASSWORD} \
+                                        --firstname Superset \
+                                        --lastname Admin \
+                                        --email ${SUPERSET_ADMIN_EMAIL} &&
+              superset db upgrade &&
+              superset init
               "
 
   db:

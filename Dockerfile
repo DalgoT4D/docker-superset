@@ -3,12 +3,6 @@ FROM apache/superset
 # Switching to root to install the required packages
 USER root
 
-# Example: installing the MySQL driver to connect to the metadata database
-# if you prefer Postgres, you may want to use `psycopg2-binary` instead
-RUN pip install --upgrade pip
-
-RUN pip install psycopg2-binary
-
 # https://superset.apache.org/docs/installation/alerts-reports/#custom-dockerfile
 RUN apt-get update && \
   apt-get install --no-install-recommends -y firefox-esr wget
@@ -19,8 +13,10 @@ RUN wget -q https://github.com/mozilla/geckodriver/releases/download/v${GECKODRI
   chmod 755 /usr/bin/geckodriver && \
   rm geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz
 
-RUN pip install --no-cache gevent psycopg2 redis flower
-
+# python packages
+USER superset
+RUN pip install --upgrade --user pip
+RUN pip install --no-cache --user gevent psycopg2-binary redis celery flower
 
 
 # Example: installing a driver to connect to Redshift
