@@ -688,7 +688,7 @@ CACHE_CONFIG: CacheConfig = {
     "REFRESH_TIMEOUT_ON_RETRIEVAL": True,
     "CACHE_TYPE": "RedisCache",
     "CACHE_KEY_PREFIX": "superset_results",
-    "CACHE_REDIS_URL": "redis://localhost:6379/0",
+    "CACHE_REDIS_URL": "redis://superset_cache:6379/0",
 }
 
 # Cache for datasource metadata and query results
@@ -698,7 +698,7 @@ DATA_CACHE_CONFIG: CacheConfig = {
     "REFRESH_TIMEOUT_ON_RETRIEVAL": True,
     "CACHE_TYPE": "RedisCache",
     "CACHE_KEY_PREFIX": "superset_data_cache",
-    "CACHE_REDIS_URL": "redis://localhost:6379/0",
+    "CACHE_REDIS_URL": "redis://superset_cache:6379/0",
 }
 
 # Cache for dashboard filter state (`CACHE_TYPE` defaults to `SimpleCache` when
@@ -709,7 +709,7 @@ FILTER_STATE_CACHE_CONFIG: CacheConfig = {
     "REFRESH_TIMEOUT_ON_RETRIEVAL": True,
     "CACHE_TYPE": "RedisCache",
     "CACHE_KEY_PREFIX": "superset_filter_cache",
-    "CACHE_REDIS_URL": "redis://localhost:6379/0",
+    "CACHE_REDIS_URL": "redis://superset_cache:6379/0",
 }
 
 # Cache for explore form data state (`CACHE_TYPE` defaults to `SimpleCache` when
@@ -720,7 +720,7 @@ EXPLORE_FORM_DATA_CACHE_CONFIG: CacheConfig = {
     "REFRESH_TIMEOUT_ON_RETRIEVAL": True,
     "CACHE_TYPE": "RedisCache",
     "CACHE_KEY_PREFIX": "superset_explore_form_data_cache",
-    "CACHE_REDIS_URL": "redis://localhost:6379/0",
+    "CACHE_REDIS_URL": "redis://superset_cache:6379/0",
 }
 
 # store cache keys by datasource UID (via CacheKey) for custom processing/invalidation
@@ -911,12 +911,12 @@ DASHBOARD_AUTO_REFRESH_INTERVALS = [
 
 
 class CeleryConfig:  # pylint: disable=too-few-public-methods
-    broker_url = "redis://localhost:6379/0"
+    broker_url = "redis://superset_cache:6379/0"
     imports = (
         "superset.sql_lab",
         "superset.tasks",
     )
-    result_backend = "redis://localhost:6379/0"
+    result_backend = "redis://superset_cache:6379/0"
     worker_log_level = "DEBUG"
     worker_prefetch_multiplier = 10
     task_acks_late = True
