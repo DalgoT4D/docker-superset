@@ -32,7 +32,7 @@ services:
   db:
     image: postgres
     env_file:
-      - db.env
+      - superset.env
     networks:
       - app-network
 
