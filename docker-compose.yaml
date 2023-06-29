@@ -31,6 +31,8 @@ services:
       - superset.env
     networks:
       - app-network
+    volumes:
+      - ./dbstartup:/docker-entrypoint-initdb.d/
 
   superset_cache:
     image: redis
