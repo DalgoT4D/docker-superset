@@ -21,11 +21,7 @@ services:
               celery --app=superset.tasks.celery_app:app beat &&
               celery --app=superset.tasks.celery_app:app flower
               superset db upgrade &&
-              superset fab create-admin --username admin \
-                                        --password ${SUPERSET_ADMIN_PASSWORD} \
-                                        --firstname Superset \
-                                        --lastname Admin \
-                                        --email ${SUPERSET_ADMIN_EMAIL} &&
+              superset fab create-admin --username admin --password ${SUPERSET_ADMIN_PASSWORD} --firstname Superset --lastname Admin --email ${SUPERSET_ADMIN_EMAIL} &&
               superset init
               "
 
