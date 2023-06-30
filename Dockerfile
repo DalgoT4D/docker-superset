@@ -28,4 +28,4 @@ RUN pip install --no-cache --user gevent psycopg2-binary redis celery flower
 # Switching back to using the `superset` user
 USER superset
 
-COPY superset_config.py /app/superset/config.py
+COPY superset_config.py /app/superset/superset_config.py
