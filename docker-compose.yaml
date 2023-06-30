@@ -13,6 +13,7 @@ services:
       - app-network
     ports:
       - 8088:8088
+      - 5555:5555
     depends_on:
       - db
       - superset_cache
