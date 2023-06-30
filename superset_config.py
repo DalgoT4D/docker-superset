@@ -1037,7 +1037,9 @@ SQLLAB_CTAS_SCHEMA_NAME_FUNC: None | (
 
 # If enabled, it can be used to store the results of long-running queries
 # in SQL Lab by using the "Run Async" button/feature
-RESULTS_BACKEND = RedisCache(host="localhost", port=6379, key_prefix="superset_results")
+RESULTS_BACKEND = RedisCache(
+    host="superset_cache", port=6379, key_prefix="superset_results"
+)
 
 # Use PyArrow and MessagePack for async query results serialization,
 # rather than JSON. This feature requires additional testing from the
@@ -1116,7 +1118,7 @@ CONFIG_PATH_ENV_VAR = "SUPERSET_CONFIG_PATH"
 FLASK_APP_MUTATOR = None
 
 # smtp server configuration
-EMAIL_NOTIFICATIONS = False  # all the emails are sent using dryrun
+EMAIL_NOTIFICATIONS = True
 SMTP_HOST = os.environ["SMTP_HOST"]
 SMTP_STARTTLS = os.environ["SMTP_STARTTLS"]
 SMTP_SSL = os.environ["SMTP_SSL"]
@@ -1344,7 +1346,7 @@ WEBDRIVER_CONFIGURATION: dict[Any, Any] = {"service_log_path": "/dev/null"}
 WEBDRIVER_OPTION_ARGS = ["--headless"]
 
 # The base URL to query for accessing the user interface
-WEBDRIVER_BASEURL = "http://0.0.0.0:8080/"
+WEBDRIVER_BASEURL = "http://0.0.0.0:8088/"
 # The base URL for the email report hyperlinks.
 WEBDRIVER_BASEURL_USER_FRIENDLY = WEBDRIVER_BASEURL
 # Time selenium will wait for the page to load and render for the email report.
