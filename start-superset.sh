@@ -5,7 +5,7 @@ source superset.env
 set +o allexport
 
 docker exec -itd docker-superset-superset-1 celery --app=superset.tasks.celery_app:app worker --pool=prefork -O fair -c 4
-docker exec -itd docker-superset-superset-1 celery --app=superset.tasks.celery_app:app beat
+docker exec -itd docker-superset-superset-1 celery --app=superset.tasks.celery_app:app beat -s /app/superset_home/celerybeat_schedule
 docker exec -itd docker-superset-superset-1 celery --app=superset.tasks.celery_app:app flower
 
 docker exec -it docker-superset-superset-1 superset db upgrade
