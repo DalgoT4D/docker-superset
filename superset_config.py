@@ -101,11 +101,12 @@ RESULTS_BACKEND = RedisCache(
 
 EMAIL_NOTIFICATIONS = True
 SMTP_HOST = os.environ["SMTP_HOST"]
-SMTP_STARTTLS = os.environ["SMTP_STARTTLS"]
-SMTP_SSL = os.environ["SMTP_SSL"]
-SMTP_USER = os.environ["SMTP_USER"]
 SMTP_PORT = os.environ["SMTP_PORT"]
+SMTP_STARTTLS = True
+SMTP_SSL = False
+SMTP_USER = os.environ["SMTP_USER"]
 SMTP_PASSWORD = os.environ["SMTP_PASSWORD"]
 SMTP_MAIL_FROM = os.environ["SMTP_MAIL_FROM"]
+SMTP_SSL_SERVER_AUTH = False
 
-WEBDRIVER_BASEURL = "http://0.0.0.0:8088/"
+WEBDRIVER_BASEURL = "http://superset:8088/"
