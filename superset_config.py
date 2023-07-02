@@ -120,38 +120,32 @@ if os.getenv("ENABLE_OAUTH"):
     AUTH_USER_REGISTRATION = True
 
     # The default user self registration role
-    AUTH_USER_REGISTRATION_ROLE = "Public"
+    AUTH_USER_REGISTRATION_ROLE = "Gamma"
+
+    GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+    GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+    GOOGLE_WHITELISTED_DOMAIN = os.getenv("GOOGLE_WHITELISTED_DOMAIN")
 
     OAUTH_PROVIDERS = [
         {
             "name": "google",
-            "whitelist": ["@projecttech4dev.org"],
+            "whitelist": ["@" + GOOGLE_WHITELISTED_DOMAIN],
             "token_key": "access_token",  # Name of the token in the response of access_token_url
             "icon": "fa-address-card",  # Icon for the provider
             "remote_app": {
-                # "base_url": "https://www.googleapis.com/oauth2/v2/'",
-                "client_id": "316034788132-a53r22euhgres5o027p220gapa8gf6gj.apps.googleusercontent.com",  # Client Id (Identify Superset application)
-                "client_secret": "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",  # Secret for this Client Id (Identify Superset application)
-                # "server_metadata_url": "https://accounts.google.com/.well-known/openid-configuration",
-                "client_kwargs": {
-                    # "scope": "https://www.googleapis.com/auth/userinfo.profile"
-                    "scope": "email"
-                },  # Scope for the Authorization
+                "client_id": GOOGLE_CLIENT_ID,  # Client Id (Identify Superset application)
+                "client_secret": GOOGLE_CLIENT_SECRET,  # Secret for this Client Id (Identify Superset application)
+                "client_kwargs": {"scope": "email"},  # Scope for the Authorization
                 "access_token_method": "POST",  # HTTP Method to call access_token_url
                 "access_token_params": {  # Additional parameters for calls to access_token_url
-                    "client_id": "316034788132-a53r22euhgres5o027p220gapa8gf6gj.apps.googleusercontent.com"
+                    "client_id": GOOGLE_CLIENT_ID
                 },
                 "access_token_headers": {  # Additional headers for calls to access_token_url
                     "Authorization": "Basic Base64EncodedClientIdAndSecret"
                 },
-                # "api_base_url": "https://accounts.google.com/o/oauth2/v2/auth",
                 "api_base_url": "https://www.googleapis.com/oauth2/v2/'",
                 "access_token_url": "https://oauth2.googleapis.com/token",
                 "authorize_url": "https://accounts.google.com/o/oauth2/auth",
             },
         }
     ]
-
-    # from .custom_security_manager import CustomSecurityManager
-
-    # CUSTOM_SECURITY_MANAGER = CustomSecurityManager
