@@ -13,7 +13,7 @@ services:
     networks:
       - app-network
     ports:
-      - 8088:8088
+      - 80:8088
     depends_on:
       - db
       - superset_cache
@@ -63,6 +63,6 @@ services:
       - superset
     restart: always
     ports:
-      - 5556:5555
+      - 5555:5555
     networks:
       - app-network
