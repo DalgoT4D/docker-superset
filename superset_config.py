@@ -122,6 +122,10 @@ if os.getenv("ENABLE_OAUTH"):
     # The default user self registration role
     AUTH_USER_REGISTRATION_ROLE = "Gamma"
 
+    # without this the redirect_url will be "http" and will therefore not match the url
+    # provided in the google cloud console
+    ENABLE_PROXY_FIX = True
+
     GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
     GOOGLE_WHITELISTED_DOMAIN = os.getenv("GOOGLE_WHITELISTED_DOMAIN")
