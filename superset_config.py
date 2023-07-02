@@ -3,6 +3,7 @@ from datetime import timedelta
 from cachelib.redis import RedisCache
 from superset.superset_typing import CacheConfig
 from celery.schedules import crontab
+from flask_appbuilder.security.manager import AUTH_OAUTH
 
 SQLALCHEMY_DATABASE_URI = os.environ["SQLALCHEMY_DATABASE_URI"]
 FEATURE_FLAGS = {
@@ -110,3 +111,47 @@ SMTP_MAIL_FROM = os.environ["SMTP_MAIL_FROM"]
 SMTP_SSL_SERVER_AUTH = False
 
 WEBDRIVER_BASEURL = "http://superset:8088/"
+
+if os.getenv("ENABLE_OAUTH"):
+    # change from AUTH_DB to AUTH_OAUTH
+    AUTH_TYPE = AUTH_OAUTH
+
+    # Will allow user self registration, allowing to create Flask users from Authorized User
+    AUTH_USER_REGISTRATION = True
+
+    # The default user self registration role
+    AUTH_USER_REGISTRATION_ROLE = "Public"
+
+    OAUTH_PROVIDERS = [
+        {
+            "name": "google",
+            "whitelist": ["@projecttech4dev.org"],
+            "token_key": "access_token",  # Name of the token in the response of access_token_url
+            "icon": "fa-address-card",  # Icon for the provider
+            "remote_app": {
+                # "base_url": "https://www.googleapis.com/oauth2/v2/'",
+                "client_id": "316034788132-a53r22euhgres5o027p220gapa8gf6gj.apps.googleusercontent.com",  # Client Id (Identify Superset application)
+                "client_secret": "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",  # Secret for this Client Id (Identify Superset application)
+                # "server_metadata_url": "https://accounts.google.com/.well-known/openid-configuration",
+                "client_kwargs": {
+                    # "scope": "https://www.googleapis.com/auth/userinfo.profile"
+                    "scope": "email"
+                },  # Scope for the Authorization
+                "access_token_method": "POST",  # HTTP Method to call access_token_url
+                "access_token_params": {  # Additional parameters for calls to access_token_url
+                    "client_id": "316034788132-a53r22euhgres5o027p220gapa8gf6gj.apps.googleusercontent.com"
+                },
+                "access_token_headers": {  # Additional headers for calls to access_token_url
+                    "Authorization": "Basic Base64EncodedClientIdAndSecret"
+                },
+                # "api_base_url": "https://accounts.google.com/o/oauth2/v2/auth",
+                "api_base_url": "https://www.googleapis.com/oauth2/v2/'",
+                "access_token_url": "https://oauth2.googleapis.com/token",
+                "authorize_url": "https://accounts.google.com/o/oauth2/auth",
+            },
+        }
+    ]
+
+    # from .custom_security_manager import CustomSecurityManager
+
+    # CUSTOM_SECURITY_MANAGER = CustomSecurityManager
