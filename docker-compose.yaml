@@ -8,11 +8,12 @@ services:
   superset:
     env_file:
       - superset.env
-    image: "ddp-superset:0.1"
+    image: "ddp-superset:0.2"
+    container_name: superset-oauth
     networks:
       - app-network
     ports:
-      - 80:8088
+      - 8088:8088
     depends_on:
       - db
       - superset_cache
@@ -32,7 +33,7 @@ services:
       - app-network
 
   celery-beat:
-    image: ddp-superset:0.1
+    image: ddp-superset:0.2
     command: celery --app=superset.tasks.celery_app:app beat -s /app/superset_home/celerybeat_schedule
     env_file:
       - superset.env
@@ -43,7 +44,7 @@ services:
       - app-network
 
   celery-worker:
-    image: ddp-superset:0.1
+    image: ddp-superset:0.2
     command: celery --app=superset.tasks.celery_app:app worker --pool=prefork -O fair -c 4
     env_file:
       - superset.env
@@ -54,7 +55,7 @@ services:
       - app-network
 
   celery-flower:
-    image: ddp-superset:0.1
+    image: ddp-superset:0.2
     command: celery --app=superset.tasks.celery_app:app flower
     env_file:
       - superset.env
@@ -62,6 +63,6 @@ services:
       - superset
     restart: always
     ports:
-      - 5555:5555
+      - 5556:5555
     networks:
       - app-network
