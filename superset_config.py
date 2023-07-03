@@ -153,3 +153,6 @@ if os.getenv("ENABLE_OAUTH"):
             },
         }
     ]
+
+
+MAPBOX_API_KEY = os.getenv("MAPBOX_API_KEY")
