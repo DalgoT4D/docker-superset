@@ -174,3 +174,10 @@ TALISMAN_CONFIG = {
         ],
     },
 }
+
+# Branding
+if os.environ.get("APP_NAME"):
+    APP_NAME = os.environ.get("APP_NAME")
+
+if os.environ.get("OVERRIDE_APP_ICON"):
+    APP_ICON = "/static/assets/images/logo.png"
