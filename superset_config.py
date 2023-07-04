@@ -159,12 +159,18 @@ MAPBOX_API_KEY = os.getenv("MAPBOX_API_KEY")
 
 # https://superset.apache.org/docs/security/#content-security-policy-csp
 TALISMAN_ENABLED = True
+app_url = os.getenv("APPLICATION_URL")
 TALISMAN_CONFIG = {
     "force_https": False,  # because enabling this will break automated reports
     "content_security_policy": {
-        "style-src": ["self", "unsafe-inline"],
-        "img-src": ["self", "data:"],
-        "worker-src": ["self", "blob:"],
-        "connect-src": ["self", "https://api.mapbox.com", "https://events.mapbox.com"],
+        "style-src": ["self", app_url, "unsafe-inline"],
+        "img-src": ["self", app_url, "data:"],
+        "worker-src": ["self", app_url, "blob:"],
+        "connect-src": [
+            "self",
+            app_url,
+            "https://api.mapbox.com",
+            "https://events.mapbox.com",
+        ],
     },
 }
