@@ -29,6 +29,8 @@ RUN pip install --upgrade --user urllib3 requests botocore boto3 authlib
 USER superset
 
 COPY superset_config.py /app/pythonpath/superset_config.py
+COPY custom_user.py /app/superset/custom_user.py
+COPY scripts/uploadusers.py /app/uploadusers.py
 
 # this repo ships with the tech4dev logo, replace it if you need to
 COPY logo.png /app/superset/static/assets/images/logo.png

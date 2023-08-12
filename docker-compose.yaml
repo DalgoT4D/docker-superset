@@ -17,6 +17,10 @@ services:
     depends_on:
       - db
       - superset_cache
+    volumes:
+      - ./host_data:/host_data/
+      - ./scripts:/scripts/
+      - ./logs:/logs/
 
   db:
     image: postgres
