@@ -2,3 +2,4 @@ sneha-superset-config.py
 superset.env
 host_data/users.json
 logs/
+notes
