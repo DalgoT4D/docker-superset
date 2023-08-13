@@ -4,6 +4,9 @@ from cachelib.redis import RedisCache
 from superset.superset_typing import CacheConfig
 from celery.schedules import crontab
 from flask_appbuilder.security.manager import AUTH_OAUTH
+from superset.custom_user import CustomSecurityManager
+
+CUSTOM_SECURITY_MANAGER = CustomSecurityManager
 
 SQLALCHEMY_DATABASE_URI = os.environ["SQLALCHEMY_DATABASE_URI"]
 FEATURE_FLAGS = {
@@ -112,7 +115,26 @@ SMTP_SSL_SERVER_AUTH = False
 
 WEBDRIVER_BASEURL = "http://superset:8088/"
 
+ENABLE_CORS = True
+CORS_OPTIONS = {
+    "supports_credentials": True,
+    "allow_headers": [
+        "X-CSRFToken",
+        "Content-Type",
+        "Origin",
+        "X-Requested-With",
+        "Accept",
+        "Authorization",
+    ],
+    "origins": [os.environ["CORS_ORIGINS"].split(",")],
+}
+
+SESSION_COOKIE_SAMESITE = None
+SESSION_COOKIE_SECURE = False
+SUPERSET_FEATURE_EMBEDDED_SUPERSET = True
+
 if os.getenv("ENABLE_OAUTH"):
+    CSRF_ENABLED = True
     # change from AUTH_DB to AUTH_OAUTH
     AUTH_TYPE = AUTH_OAUTH
 
