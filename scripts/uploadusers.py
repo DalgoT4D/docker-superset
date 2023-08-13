@@ -65,13 +65,13 @@ for jsonuser in users_to_upload["users"]:
 
     if len(result) == 1:
         user = result[0]
-        logger.info("found user having email %s", email)
+        print("found user having email %s", email)
     elif not args.update_only:
         user = CustomUser()
         session.add(user)
-        logger.info("creating user with email %s", email)
+        print("creating user with email %s", email)
     else:
-        logger.info("skipping user with email %s", email)
+        print("skipping user with email %s", email)
         continue
 
     user.username = jsonuser["username"]
@@ -81,7 +81,7 @@ for jsonuser in users_to_upload["users"]:
     user.roles = [DBROLES[role_str] for role_str in jsonuser["roles"]]
     user.blob = json.dumps(jsonuser["blob"])
 
-    logger.info(
+    print(
         "writing user email=%s username=%s blob=%s",
         user.email,
         user.username,
