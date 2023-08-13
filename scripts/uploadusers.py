@@ -30,6 +30,11 @@ parser.add_argument(
     default="/host_data/users.json",
     help="JSON file containing users to upsert, usually from /host_data/",
 )
+parser.add_argument(
+    "--update-only",
+    action="store_true",
+    help="Only updating existing users, do not create new users",
+)
 args = parser.parse_args()
 
 
@@ -61,10 +66,13 @@ for jsonuser in users_to_upload["users"]:
     if len(result) == 1:
         user = result[0]
         logger.info("found user having email %s", email)
-    else:
+    elif not args.update_only:
         user = CustomUser()
         session.add(user)
         logger.info("creating user with email %s", email)
+    else:
+        logger.info("skipping user with email %s", email)
+        continue
 
     user.username = jsonuser["username"]
     user.first_name = jsonuser["first_name"]
