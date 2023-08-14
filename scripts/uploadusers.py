@@ -4,15 +4,6 @@ this script will be copied into and run from within the docker container
 import argparse
 import json
 
-import logging
-
-logger = logging.getLogger("uploadusers")
-handler = logging.FileHandler("/logs/uploadusers.log")
-handler.setLevel(logging.INFO)
-formatter = logging.Formatter("[%(levelname)s] %(asctime)s: %(message)s")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-
 
 from superset.custom_user import CustomUser
 from sqlalchemy import create_engine, select
@@ -65,14 +56,14 @@ for jsonuser in users_to_upload["users"]:
 
     if len(result) == 1:
         user = result[0]
-        print("found user having email %s", email)
+        print("found user having email %s" % email)
     elif not args.update_only:
         user = CustomUser()
         session.add(user)
         user.username = jsonuser["username"]
-        print("creating user with email %s", email)
+        print("creating user with email %s" % email)
     else:
-        print("skipping user with email %s", email)
+        print("skipping user with email %s" % email)
         continue
 
     user.first_name = jsonuser["first_name"]
@@ -82,9 +73,11 @@ for jsonuser in users_to_upload["users"]:
     user.blob = json.dumps(jsonuser["blob"])
 
     print(
-        "writing user email=%s username=%s blob=%s",
-        user.email,
-        user.username,
-        user.blob,
+        "writing user email=%s username=%s blob=%s"
+        % (
+            user.email,
+            user.username,
+            user.blob,
+        )
     )
     session.commit()
