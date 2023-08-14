@@ -142,7 +142,7 @@ if os.getenv("ENABLE_OAUTH"):
     AUTH_USER_REGISTRATION = True
 
     # The default user self registration role
-    AUTH_USER_REGISTRATION_ROLE = "Gamma"
+    AUTH_USER_REGISTRATION_ROLE = "Public"
 
     # without this the redirect_url will be "http" and will therefore not match the url
     # provided in the google cloud console
