@@ -69,12 +69,12 @@ for jsonuser in users_to_upload["users"]:
     elif not args.update_only:
         user = CustomUser()
         session.add(user)
+        user.username = jsonuser["username"]
         print("creating user with email %s", email)
     else:
         print("skipping user with email %s", email)
         continue
 
-    user.username = jsonuser["username"]
     user.first_name = jsonuser["first_name"]
     user.last_name = jsonuser["last_name"]
     user.email = email
