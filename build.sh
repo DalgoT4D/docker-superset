@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build --tag ddp-superset:0.2 .
+docker build --tag ddp-superset:0.3 .
