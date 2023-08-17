@@ -3,12 +3,15 @@ this script will be copied into and run from within the docker container
 """
 import argparse
 import json
-
+import os
+from dotenv import load_dotenv
 
 from superset.custom_user import CustomUser
 from sqlalchemy import create_engine, select
 
-engine = create_engine("postgresql://postgres:password@db/superset")
+load_dotenv()
+DBCONNECTION = os.getenv("DBCONNECTION")
+engine = create_engine(DBCONNECTION)
 from sqlalchemy.orm import sessionmaker
 from flask_appbuilder.security.sqla.models import Role
 
