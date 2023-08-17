@@ -17,7 +17,7 @@ RUN wget -q https://github.com/mozilla/geckodriver/releases/download/v${GECKODRI
 USER root
 RUN pip install --upgrade pip
 RUN pip install --no-cache gevent psycopg2-binary redis celery flower
-RUN pip install --upgrade urllib3 requests botocore boto3 authlib
+RUN pip install --upgrade urllib3 requests botocore boto3 authlib python-dotenv
 
 # Example: installing a driver to connect to Redshift
 # Find which driver you need based on the analytics database
