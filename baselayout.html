@@ -12,9 +12,9 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the speci
     console.log("base layout loaded");
     window.addEventListener("message", function (event) {
         const message = event.data;
-        console.log("someone asked for soemthign");
+        console.log("someone asked for something in baselayout.html");
         if (message?.ask === "locationStatus") {
-            console.log("someone asked for locationStatus");
+            console.log("someone asked for locationStatus in baselayout.html");
             event.source.postMessage({ locationStatus: window.location.pathname }, event.origin);
         }
     });
