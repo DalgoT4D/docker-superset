@@ -96,12 +96,9 @@
       </div>
     </div>
     <script>
-      console.log("basic.html loaded");
       window.addEventListener("message", function (event) {
           const message = event.data;
-          console.log("someone asked for something in basic.html");
           if (message?.ask === "locationStatus") {
-              console.log("someone asked for locationStatus in basic.html");
               event.source.postMessage({ locationStatus: window.location.pathname }, event.origin);
           }
       });
