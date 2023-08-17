@@ -125,6 +125,7 @@ CORS_OPTIONS = {
         "X-Requested-With",
         "Accept",
         "Authorization",
+        "X-Frame-Options",
     ],
     "origins": [os.environ["CORS_ORIGINS"].split(",")],
 }
@@ -193,6 +194,11 @@ TALISMAN_CONFIG = {
             app_host,
             "https://api.mapbox.com",
             "https://events.mapbox.com",
+        ],
+        "frame-ancestors": [
+            "self",
+            "https://ddpstagingui.projecttech4dev.org",
+            "https://ddp-prod-ui.projecttech4dev.org",
         ],
     },
 }
