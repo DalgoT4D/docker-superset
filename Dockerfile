@@ -31,6 +31,7 @@ USER superset
 COPY superset_config.py /app/pythonpath/superset_config.py
 COPY custom_user.py /app/superset/custom_user.py
 COPY jinja_context.py /app/superset/jinja_context.py
+COPY baselayout.html /app/superset/templates/appbuilder/baselayout.html
 COPY scripts/uploadusers.py /app/uploadusers.py
 
 # this repo ships with the tech4dev logo, replace it if you need to
