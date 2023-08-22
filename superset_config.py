@@ -197,6 +197,7 @@ TALISMAN_CONFIG = {
         ],
         "frame-ancestors": [
             "self",
+            "http://localhost:3000",
             "https://ddpstagingui.projecttech4dev.org",
             "https://ddp-prod-ui.projecttech4dev.org",
         ],

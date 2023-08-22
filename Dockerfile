@@ -17,7 +17,7 @@ RUN wget -q https://github.com/mozilla/geckodriver/releases/download/v${GECKODRI
 USER root
 RUN pip install --upgrade pip
 RUN pip install --no-cache gevent psycopg2-binary redis celery flower
-RUN pip install --upgrade urllib3 requests botocore boto3 authlib
+RUN pip install --upgrade urllib3 requests botocore boto3 authlib python-dotenv
 
 # Example: installing a driver to connect to Redshift
 # Find which driver you need based on the analytics database
@@ -31,6 +31,8 @@ USER superset
 COPY superset_config.py /app/pythonpath/superset_config.py
 COPY custom_user.py /app/superset/custom_user.py
 COPY jinja_context.py /app/superset/jinja_context.py
+COPY baselayout.html /app/superset/templates/appbuilder/baselayout.html
+COPY basic.html /app/superset/templates/superset/basic.html
 COPY scripts/uploadusers.py /app/uploadusers.py
 
 # this repo ships with the tech4dev logo, replace it if you need to
