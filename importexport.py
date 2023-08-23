@@ -64,18 +64,24 @@ if feature_flags.get("VERSIONED_EXPORT"):
     @click.command()
     @with_appcontext
     @click.option(
+        "--username",
+        "-u",
+        default="admin",
+        help="user to assume",
+    )
+    @click.option(
         "--dashboard-file",
         "-f",
         help="Specify the file to export to",
     )
-    def export_dashboards(dashboard_file: Optional[str] = None) -> None:
+    def export_dashboards(username: str, dashboard_file: Optional[str] = None) -> None:
         """Export dashboards to ZIP file"""
         # pylint: disable=import-outside-toplevel
         from superset.dashboards.commands.export import ExportDashboardsCommand
         from superset.models.dashboard import Dashboard
 
         # pylint: disable=assigning-non-slot
-        g.user = security_manager.find_user(username="admin")
+        g.user = security_manager.find_user(username=username)
 
         dashboard_ids = [id_ for (id_,) in db.session.query(Dashboard.id).all()]
         timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
@@ -99,18 +105,26 @@ if feature_flags.get("VERSIONED_EXPORT"):
     @click.command()
     @with_appcontext
     @click.option(
+        "--username",
+        "-u",
+        default="admin",
+        help="user to assume",
+    )
+    @click.option(
         "--datasource-file",
         "-f",
         help="Specify the file to export to",
     )
-    def export_datasources(datasource_file: Optional[str] = None) -> None:
+    def export_datasources(
+        username: str, datasource_file: Optional[str] = None
+    ) -> None:
         """Export datasources to ZIP file"""
         # pylint: disable=import-outside-toplevel
         from superset.connectors.sqla.models import SqlaTable
         from superset.datasets.commands.export import ExportDatasetsCommand
 
         # pylint: disable=assigning-non-slot
-        g.user = security_manager.find_user(username="admin")
+        g.user = security_manager.find_user(username=username)
 
         dataset_ids = [id_ for (id_,) in db.session.query(SqlaTable.id).all()]
         timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
