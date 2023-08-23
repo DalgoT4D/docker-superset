@@ -33,6 +33,7 @@ COPY custom_user.py /app/superset/custom_user.py
 COPY jinja_context.py /app/superset/jinja_context.py
 COPY baselayout.html /app/superset/templates/appbuilder/baselayout.html
 COPY basic.html /app/superset/templates/superset/basic.html
+COPY importexport.py /app/superset/cli/importexport.py
 COPY scripts/uploadusers.py /app/uploadusers.py
 
 # this repo ships with the tech4dev logo, replace it if you need to
