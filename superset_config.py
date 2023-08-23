@@ -153,10 +153,15 @@ if os.getenv("ENABLE_OAUTH"):
     GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
     GOOGLE_WHITELISTED_DOMAIN = os.getenv("GOOGLE_WHITELISTED_DOMAIN")
 
+    # whitelist ourselves so our clients don't need to create accounts for us on their domain
+    whitelist = ["@projecttech4dev.org"]
+    if GOOGLE_WHITELISTED_DOMAIN and GOOGLE_WHITELISTED_DOMAIN != "projecttech4dev.org":
+        whitelist.append("@" + GOOGLE_WHITELISTED_DOMAIN)
+
     OAUTH_PROVIDERS = [
         {
             "name": "google",
-            "whitelist": ["@" + GOOGLE_WHITELISTED_DOMAIN],
+            "whitelist": whitelist,
             "token_key": "access_token",  # Name of the token in the response of access_token_url
             "icon": "fa-address-card",  # Icon for the provider
             "remote_app": {
