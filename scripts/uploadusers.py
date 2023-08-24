@@ -25,9 +25,9 @@ parser.add_argument(
     help="JSON file containing users to upsert, usually from /host_data/",
 )
 parser.add_argument(
-    "--update-only",
+    "--create-new",
     action="store_true",
-    help="Only updating existing users, do not create new users",
+    help="Create new users. Without this flag only update existing users",
 )
 args = parser.parse_args()
 
@@ -59,14 +59,14 @@ for jsonuser in users_to_upload["users"]:
 
     if len(result) == 1:
         user = result[0]
-        print("found user having email %s" % email)
-    elif not args.update_only:
+        print(f"found user having email {email}")
+    elif args.create_new:
         user = CustomUser()
         session.add(user)
         user.username = jsonuser["username"]
-        print("creating user with email %s" % email)
+        print(f"creating user with email {email}")
     else:
-        print("skipping user with email %s" % email)
+        print(f"skipping user with email {email}")
         continue
 
     user.first_name = jsonuser["first_name"]
@@ -75,12 +75,5 @@ for jsonuser in users_to_upload["users"]:
     user.roles = [DBROLES[role_str] for role_str in jsonuser["roles"]]
     user.blob = json.dumps(jsonuser["blob"])
 
-    print(
-        "writing user email=%s username=%s blob=%s"
-        % (
-            user.email,
-            user.username,
-            user.blob,
-        )
-    )
+    print(f"writing user email={user.email} username={user.username} blob={user.blob}")
     session.commit()
