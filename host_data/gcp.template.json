@@ -1,0 +1,4 @@
+{
+  "comment_1": "copy the gcp.json from vaultwarden. those are the credentials for a service account with NO PERMISSIONS",
+  "comment_2": "actual credentials to a (client's) BigQuery database will be entered via the Superset UI"
+}
