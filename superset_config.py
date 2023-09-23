@@ -22,7 +22,7 @@ FEATURE_FLAGS = {
 
 # Default cache for Superset objects
 CACHE_CONFIG: CacheConfig = {
-    "CACHE_DEFAULT_TIMEOUT": int(timedelta(days=1).total_seconds()),
+    "CACHE_DEFAULT_TIMEOUT": 3600,
     # should the timeout be reset when retrieving a cached value
     "REFRESH_TIMEOUT_ON_RETRIEVAL": True,
     "CACHE_TYPE": "RedisCache",
@@ -32,7 +32,7 @@ CACHE_CONFIG: CacheConfig = {
 
 # Cache for datasource metadata and query results
 DATA_CACHE_CONFIG: CacheConfig = {
-    "CACHE_DEFAULT_TIMEOUT": int(timedelta(days=1).total_seconds()),
+    "CACHE_DEFAULT_TIMEOUT": 3600,
     # should the timeout be reset when retrieving a cached value
     "REFRESH_TIMEOUT_ON_RETRIEVAL": True,
     "CACHE_TYPE": "RedisCache",
@@ -43,7 +43,7 @@ DATA_CACHE_CONFIG: CacheConfig = {
 # Cache for dashboard filter state (`CACHE_TYPE` defaults to `SimpleCache` when
 #  running in debug mode unless overridden)
 FILTER_STATE_CACHE_CONFIG: CacheConfig = {
-    "CACHE_DEFAULT_TIMEOUT": int(timedelta(days=1).total_seconds()),
+    "CACHE_DEFAULT_TIMEOUT": 3600,
     # should the timeout be reset when retrieving a cached value
     "REFRESH_TIMEOUT_ON_RETRIEVAL": True,
     "CACHE_TYPE": "RedisCache",
@@ -54,7 +54,7 @@ FILTER_STATE_CACHE_CONFIG: CacheConfig = {
 # Cache for explore form data state (`CACHE_TYPE` defaults to `SimpleCache` when
 #  running in debug mode unless overridden)
 EXPLORE_FORM_DATA_CACHE_CONFIG: CacheConfig = {
-    "CACHE_DEFAULT_TIMEOUT": int(timedelta(days=1).total_seconds()),
+    "CACHE_DEFAULT_TIMEOUT": 3600,
     # should the timeout be reset when retrieving a cached value
     "REFRESH_TIMEOUT_ON_RETRIEVAL": True,
     "CACHE_TYPE": "RedisCache",
