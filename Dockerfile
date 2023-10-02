@@ -29,12 +29,13 @@ RUN pip install --upgrade sqlalchemy-bigquery
 # Switching back to using the `superset` user
 USER superset
 
-COPY superset_config.py /app/pythonpath/superset_config.py
-COPY custom_user.py /app/superset/custom_user.py
-COPY jinja_context.py /app/superset/jinja_context.py
-COPY baselayout.html /app/superset/templates/appbuilder/baselayout.html
-COPY basic.html /app/superset/templates/superset/basic.html
-COPY importexport.py /app/superset/cli/importexport.py
+COPY superset2/superset_config.py /app/pythonpath/superset_config.py
+COPY superset2/custom_user.py /app/superset/custom_user.py
+COPY superset2/jinja_context.py /app/superset/jinja_context.py
+COPY superset2/baselayout.html /app/superset/templates/appbuilder/baselayout.html
+COPY superset2/basic.html /app/superset/templates/superset/basic.html
+COPY superset2/importexport.py /app/superset/cli/importexport.py
+
 COPY scripts/uploadusers.py /app/uploadusers.py
 
 # this repo ships with the tech4dev logo, replace it if you need to
