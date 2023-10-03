@@ -43,6 +43,14 @@
         {% endblock %}
     </div>
     <div id="app" data-bootstrap="{{ bootstrap_data() }}"></div>
+    <script>
+        window.addEventListener("message", function (event) {
+            const message = event.data;
+            if (message?.ask === "locationStatus") {
+                event.source.postMessage({ locationStatus: window.location.pathname }, event.origin);
+            }
+        });
+    </script>
 
     {% block footer %}
         <footer>

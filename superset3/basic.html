@@ -102,6 +102,14 @@
         </div>
       </div>
     </div>
+    <script>
+      window.addEventListener("message", function (event) {
+          const message = event.data;
+          if (message?.ask === "locationStatus") {
+              event.source.postMessage({ locationStatus: window.location.pathname }, event.origin);
+          }
+      });
+    </script>
 
     {% block tail_js %}
       {% if not standalone_mode %}
