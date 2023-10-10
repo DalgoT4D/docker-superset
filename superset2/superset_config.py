@@ -18,6 +18,7 @@ FEATURE_FLAGS = {
     "HORIZONTAL_FILTER_BAR": True,
     "ESTIMATE_QUERY_COST": True,
     "SSH_TUNNELING": True,
+    "GENERIC_CHART_AXES": True,
 }
 
 # Default cache for Superset objects
