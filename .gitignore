@@ -1,5 +1,7 @@
 sneha-superset-config.py
 superset.env
 host_data/users.json
+host_data/gcp.json
+scripts/.env
 logs/
 notes

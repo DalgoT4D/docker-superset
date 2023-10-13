@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build --tag ddp-superset:0.3 .
+docker build --tag tech4dev/superset2:0.1 .

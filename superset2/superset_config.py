@@ -121,6 +121,13 @@ SMTP_MAIL_FROM = os.environ["SMTP_MAIL_FROM"]
 SMTP_SSL_SERVER_AUTH = False
 
 WEBDRIVER_BASEURL = "http://superset:8088/"
+WEBDRIVER_BASEURL_USER_FRIENDLY = f"https://{os.environ['APPLICATION_HOST']}/"
+WEBDRIVER_WINDOW = {
+    "dashboard": (1600, 3200),
+    "slice": (3000, 1200),
+    "pixel_density": 1,
+}
+
 
 ENABLE_CORS = True
 CORS_OPTIONS = {
