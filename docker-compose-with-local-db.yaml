@@ -8,7 +8,7 @@ services:
   superset:
     env_file:
       - superset.env
-    image: "ddp-superset:0.3"
+    image: "tech4dev/superset2:0.1"
     container_name: superset
     networks:
       - app-network
@@ -37,7 +37,7 @@ services:
       - app-network
 
   celery-beat:
-    image: ddp-superset:0.3
+    image: tech4dev/superset2:0.1
     command: celery --app=superset.tasks.celery_app:app beat -s /app/superset_home/celerybeat_schedule
     env_file:
       - superset.env
@@ -48,7 +48,7 @@ services:
       - app-network
 
   celery-worker:
-    image: ddp-superset:0.3
+    image: tech4dev/superset2:0.1
     command: celery --app=superset.tasks.celery_app:app worker --pool=prefork -O fair -c 4
     env_file:
       - superset.env
@@ -59,7 +59,7 @@ services:
       - app-network
 
   celery-flower:
-    image: ddp-superset:0.3
+    image: tech4dev/superset2:0.1
     command: celery --app=superset.tasks.celery_app:app flower
     env_file:
       - superset.env
