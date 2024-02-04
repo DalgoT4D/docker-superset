@@ -1,4 +1,4 @@
-FROM apache/superset:3.0.0
+FROM apache/superset:3.1.0rc3
 
 # Switching to root to install the required packages
 USER root
@@ -29,13 +29,13 @@ RUN pip install --upgrade sqlalchemy-bigquery
 # Switching back to using the `superset` user
 USER superset
 
-COPY superset3/superset_config.py /app/pythonpath/superset_config.py
-COPY superset3/custom_user.py /app/superset/custom_user.py
-COPY superset3/jinja_context.py /app/superset/jinja_context.py
-COPY superset3/baselayout.html /app/superset/templates/appbuilder/baselayout.html
-COPY superset3/basic.html /app/superset/templates/superset/basic.html
+COPY assets/superset_config.py /app/pythonpath/superset_config.py
+COPY assets/custom_user.py /app/superset/custom_user.py
+COPY assets/jinja_context.py /app/superset/jinja_context.py
+COPY assets/baselayout.html /app/superset/templates/appbuilder/baselayout.html
+COPY assets/basic.html /app/superset/templates/superset/basic.html
 
-COPY scripts/uploadusers.py /app/uploadusers.py
+# COPY scripts/uploadusers.py /app/uploadusers.py
 
 # this repo ships with the tech4dev logo, replace it if you need to
-COPY logo.png /app/superset/static/assets/images/logo.png
+COPY assets/logo.png /app/superset/static/assets/images/logo.png

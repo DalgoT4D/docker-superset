@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "email": "rohit@projecttech4dev.org",
+      "username": "google_104818355500890444660",
+      "first_name": "Rohit",
+      "last_name": "Chatterjee",
+      "roles": ["Admin"],
+      "blob": {"coid": 1, "anotherfield": "val"}
+    },
+    {
+      "email": "rohit+1@projecttech4dev.org",
+      "username": "google_104818355500890444661",
+      "first_name": "Rohit_1",
+      "last_name": "Chatterjee",
+      "roles": ["Alpha", "Gamma"],
+      "blob": {"coid": 2, "anotherfield": "val2"}
+    } 
+  ]
+}
