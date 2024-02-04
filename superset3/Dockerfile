@@ -16,7 +16,7 @@ RUN wget -q https://github.com/mozilla/geckodriver/releases/download/v${GECKODRI
 # python packages
 USER root
 RUN pip install --upgrade pip
-RUN pip install --no-cache gevent psycopg2-binary redis celery flower
+RUN pip install --no-cache gevent psycopg2-binary redis celery flower pytz
 RUN pip install --upgrade urllib3 requests botocore boto3 authlib python-dotenv
 RUN pip install --upgrade sqlalchemy-bigquery
 
@@ -34,6 +34,7 @@ COPY assets/custom_user.py /app/superset/custom_user.py
 COPY assets/jinja_context.py /app/superset/jinja_context.py
 COPY assets/baselayout.html /app/superset/templates/appbuilder/baselayout.html
 COPY assets/basic.html /app/superset/templates/superset/basic.html
+COPY assets/dao.py /app/superset/views/log/dao.py
 
 # COPY scripts/uploadusers.py /app/uploadusers.py
 
