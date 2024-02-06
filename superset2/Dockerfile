@@ -18,7 +18,7 @@ USER root
 RUN pip install --upgrade pip
 RUN pip install --no-cache gevent psycopg2-binary redis celery flower
 RUN pip install --upgrade urllib3 requests botocore boto3 authlib python-dotenv
-RUN pip install --upgrade sqlalchemy-bigquery
+RUN pip install --upgrade sqlalchemy-bigquery pandas_gbq google-auth
 
 # Example: installing a driver to connect to Redshift
 # Find which driver you need based on the analytics database
@@ -29,14 +29,13 @@ RUN pip install --upgrade sqlalchemy-bigquery
 # Switching back to using the `superset` user
 USER superset
 
-COPY superset2/superset_config.py /app/pythonpath/superset_config.py
-COPY superset2/custom_user.py /app/superset/custom_user.py
-COPY superset2/jinja_context.py /app/superset/jinja_context.py
-COPY superset2/baselayout.html /app/superset/templates/appbuilder/baselayout.html
-COPY superset2/basic.html /app/superset/templates/superset/basic.html
-COPY superset2/importexport.py /app/superset/cli/importexport.py
-
-COPY scripts/uploadusers.py /app/uploadusers.py
+COPY assets/superset_config.py /app/pythonpath/superset_config.py
+COPY assets/custom_user.py /app/superset/custom_user.py
+COPY assets/jinja_context.py /app/superset/jinja_context.py
+COPY assets/baselayout.html /app/superset/templates/appbuilder/baselayout.html
+COPY assets/basic.html /app/superset/templates/superset/basic.html
+COPY assets/importexport.py /app/superset/cli/importexport.py
+COPY assets/dao.py /app/superset/views/log/dao.py
 
 # this repo ships with the tech4dev logo, replace it if you need to
-COPY logo.png /app/superset/static/assets/images/logo.png
+COPY assets/logo.png /app/superset/static/assets/images/logo.png
