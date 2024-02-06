@@ -144,6 +144,10 @@ CORS_OPTIONS = {
     "origins": [os.environ["CORS_ORIGINS"].split(",")],
 }
 
+# embedding dashboard with guest token; create EmbedGamme role (a duplicate of Gamma role); 
+# add necessary datasource permissions for this role to embed a dashboard
+GUEST_ROLE_NAME = "EmbedGamma"
+
 SESSION_COOKIE_SAMESITE = None
 SESSION_COOKIE_SECURE = False
 SUPERSET_FEATURE_EMBEDDED_SUPERSET = True
