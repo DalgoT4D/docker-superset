@@ -35,6 +35,7 @@ COPY assets/jinja_context.py /app/superset/jinja_context.py
 COPY assets/baselayout.html /app/superset/templates/appbuilder/baselayout.html
 COPY assets/basic.html /app/superset/templates/superset/basic.html
 COPY assets/importexport.py /app/superset/cli/importexport.py
+COPY assets/dao.py /app/superset/views/log/dao.py
 
 # this repo ships with the tech4dev logo, replace it if you need to
 COPY assets/logo.png /app/superset/static/assets/images/logo.png
