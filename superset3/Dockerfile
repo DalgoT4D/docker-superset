@@ -34,6 +34,7 @@ COPY assets/custom_user.py /app/superset/custom_user.py
 COPY assets/jinja_context.py /app/superset/jinja_context.py
 COPY assets/baselayout.html /app/superset/templates/appbuilder/baselayout.html
 COPY assets/basic.html /app/superset/templates/superset/basic.html
+COPY assets/log.py /app/superset/daos/log.py
 
 # COPY scripts/uploadusers.py /app/uploadusers.py
 
