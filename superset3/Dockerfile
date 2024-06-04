@@ -30,6 +30,7 @@ RUN pip install --upgrade sqlalchemy-bigquery pandas_gbq google-auth
 USER superset
 
 COPY assets/superset_config.py /app/pythonpath/superset_config.py
+COPY assets/client_color_palettes.py /app/pythonpath/client_color_palettes.py
 COPY assets/custom_user.py /app/superset/custom_user.py
 COPY assets/jinja_context.py /app/superset/jinja_context.py
 COPY assets/baselayout.html /app/superset/templates/appbuilder/baselayout.html
