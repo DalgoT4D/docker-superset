@@ -5,6 +5,8 @@ from celery.schedules import crontab
 from flask_appbuilder.security.manager import AUTH_OAUTH
 from superset.custom_user import CustomSecurityManager
 
+import client_color_palettes
+
 CUSTOM_SECURITY_MANAGER = CustomSecurityManager
 
 SQLALCHEMY_DATABASE_URI = os.environ["SQLALCHEMY_DATABASE_URI"]
@@ -221,3 +223,8 @@ if os.environ.get("APP_NAME"):
 
 if os.environ.get("OVERRIDE_APP_ICON"):
     APP_ICON = "/static/assets/images/logo.png"
+
+if os.environ.get("CUSTOM_COLOR_PALETTE"):
+    EXTRA_CATEGORICAL_COLOR_SCHEMES = client_color_palettes.PALETTES[
+        os.environ.get("CUSTOM_COLOR_PALETTE")
+    ]
