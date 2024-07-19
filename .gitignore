@@ -5,3 +5,7 @@ host_data/gcp.json
 scripts/.env
 logs/
 notes
+
+
+superset3/superset.env
+demosuperset/superset.env

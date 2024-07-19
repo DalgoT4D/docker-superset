@@ -1,10 +1,11 @@
 import os
-from datetime import timedelta
 from cachelib.redis import RedisCache
 from superset.superset_typing import CacheConfig
 from celery.schedules import crontab
 from flask_appbuilder.security.manager import AUTH_OAUTH
 from superset.custom_user import CustomSecurityManager
+
+import client_color_palettes
 
 CUSTOM_SECURITY_MANAGER = CustomSecurityManager
 
@@ -20,24 +21,6 @@ FEATURE_FLAGS = {
     "SSH_TUNNELING": True,
 }
 
-EXTRA_CATEGORICAL_COLOR_SCHEMES = [
-{
-"colors":['#ecca00', '#ec9b00', '#ec5300', '#ec2400', '#ec0000'],
-"id": 'arogyaVisualizationColors',
-"description":'',
-"label": 'Arogya world Colors',
-"isDefault": True,
-},
-{
-"colors":['#ec0000', '#ecca00', '#ec9b00'],
-"id": 'arogyaVisualizationColors2',
-"description":'',
-"label": 'Arogya world Colors2',
-"isDefault": True,
-}
-]
-
-
 # Default cache for Superset objects
 CACHE_CONFIG: CacheConfig = {
     "CACHE_DEFAULT_TIMEOUT": 3600,
@@ -45,7 +28,7 @@ CACHE_CONFIG: CacheConfig = {
     "REFRESH_TIMEOUT_ON_RETRIEVAL": True,
     "CACHE_TYPE": "RedisCache",
     "CACHE_KEY_PREFIX": "superset_results",
-    "CACHE_REDIS_URL": "redis://superset_cache:6379/0",
+    "CACHE_REDIS_URL": os.environ["BROKER_URL"],
 }
 
 # Cache for datasource metadata and query results
@@ -55,7 +38,7 @@ DATA_CACHE_CONFIG: CacheConfig = {
     "REFRESH_TIMEOUT_ON_RETRIEVAL": True,
     "CACHE_TYPE": "RedisCache",
     "CACHE_KEY_PREFIX": "superset_data_cache",
-    "CACHE_REDIS_URL": "redis://superset_cache:6379/0",
+    "CACHE_REDIS_URL": os.environ["BROKER_URL"],
 }
 
 # Cache for dashboard filter state (`CACHE_TYPE` defaults to `SimpleCache` when
@@ -66,7 +49,7 @@ FILTER_STATE_CACHE_CONFIG: CacheConfig = {
     "REFRESH_TIMEOUT_ON_RETRIEVAL": True,
     "CACHE_TYPE": "RedisCache",
     "CACHE_KEY_PREFIX": "superset_filter_cache",
-    "CACHE_REDIS_URL": "redis://superset_cache:6379/0",
+    "CACHE_REDIS_URL": os.environ["BROKER_URL"],
 }
 
 # Cache for explore form data state (`CACHE_TYPE` defaults to `SimpleCache` when
@@ -77,21 +60,21 @@ EXPLORE_FORM_DATA_CACHE_CONFIG: CacheConfig = {
     "REFRESH_TIMEOUT_ON_RETRIEVAL": True,
     "CACHE_TYPE": "RedisCache",
     "CACHE_KEY_PREFIX": "superset_explore_form_data_cache",
-    "CACHE_REDIS_URL": "redis://superset_cache:6379/0",
+    "CACHE_REDIS_URL": os.environ["BROKER_URL"],
 }
 
 
-REDIS_HOST = "superset_cache"
+REDIS_HOST = os.environ["REDIS_HOST"]
 REDIS_PORT = "6379"
 
 
 class CeleryConfig:  # pylint: disable=too-few-public-methods
-    broker_url = "redis://superset_cache:6379/0"
+    broker_url = os.environ["BROKER_URL"]
     imports = (
         "superset.sql_lab",
         "superset.tasks",
     )
-    result_backend = "redis://superset_cache:6379/0"
+    result_backend = os.environ["BROKER_URL"]
     worker_log_level = "DEBUG"
     worker_prefetch_multiplier = 10
     task_acks_late = True
@@ -123,7 +106,7 @@ CELERY_CONFIG = CeleryConfig  # pylint: disable=invalid-name
 
 
 RESULTS_BACKEND = RedisCache(
-    host="superset_cache", port=6379, key_prefix="superset_results"
+    host=os.environ["REDIS_HOST"], port=6379, key_prefix="superset_results"
 )
 
 
@@ -240,3 +223,8 @@ if os.environ.get("APP_NAME"):
 
 if os.environ.get("OVERRIDE_APP_ICON"):
     APP_ICON = "/static/assets/images/logo.png"
+
+if os.environ.get("CUSTOM_COLOR_PALETTE"):
+    EXTRA_CATEGORICAL_COLOR_SCHEMES = client_color_palettes.PALETTES[
+        os.environ.get("CUSTOM_COLOR_PALETTE")
+    ]
