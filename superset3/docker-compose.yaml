@@ -13,7 +13,7 @@ services:
     networks:
       - app-network
     ports:
-      - 80:8088
+      - 8002:8088
     depends_on:
       - superset_cache
     volumes:
