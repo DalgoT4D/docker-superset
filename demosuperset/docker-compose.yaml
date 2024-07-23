@@ -9,7 +9,7 @@ services:
     env_file:
       - superset.env
     image: "tech4dev/superset3:0.2"
-    container_name: superset
+    container_name: demosuperset
     networks:
       - app-network
     ports:
