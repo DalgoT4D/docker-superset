@@ -21,8 +21,7 @@ The base image for Superset 3 is
 The `Dockerfile` may need to be edited for the architecture you choose
 
 ### Static assets
-Superset will serve static assets at `https://<superset_url>/static/assets/images/<file>`
+Superset will serve static assets at `https://<superset_url>/static/path/to/file`
 
-if the `file` is available at `/app/superset/static/assets/images/<file>` within the Docker container.
+if the `file` is available at `/app/superset/static/path/to/file` within the Docker container.
 
-@himanshu please check how far down the directory tree this works i.e. will the statement hold for `/app/superset/static/`
