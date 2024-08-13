@@ -1,38 +1,35 @@
-# Use the specific Superset base image
-FROM {{BASE_IMAGE}}
+FROM apache/superset:3.1.3
 
 # Switching to root to install the required packages
 USER root
 
-# Install system packages
+# https://superset.apache.org/docs/installation/alerts-reports/#custom-dockerfile
 RUN apt-get update && \
   apt-get install --no-install-recommends -y firefox-esr wget
 
-# Set the version for Geckodriver
 ENV GECKODRIVER_VERSION=0.29.0
-
-# Install Geckodriver
 RUN wget -q https://github.com/mozilla/geckodriver/releases/download/v${GECKODRIVER_VERSION}/geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz && \
   tar -x geckodriver -zf geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz -O > /usr/bin/geckodriver && \
   chmod 755 /usr/bin/geckodriver && \
   rm geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz
 
-# Upgrade pip
+# python packages
+USER root
 RUN pip install --upgrade pip
-
-# Install the necessary Python packages
 RUN pip install --no-cache gevent psycopg2-binary redis celery flower pytz
 RUN pip install --upgrade urllib3 requests botocore boto3 authlib python-dotenv
 RUN pip install --upgrade sqlalchemy-bigquery pandas_gbq google-auth
 
 # Example: installing a driver to connect to Redshift
-# Uncomment and customize the following line if needed
+# Find which driver you need based on the analytics database
+# you want to connect to here:
+# https://superset.apache.org/installation.html#database-dependencies
 # RUN pip install sqlalchemy-redshift
 
 # Switching back to using the `superset` user
 USER superset
 
-# Copy client-specific configuration files
+# copy contents of assets/ to /app/ in the container
 COPY assets/pythonpath/superset_config.py /app/pythonpath/superset_config.py
 COPY assets/pythonpath/client_color_palettes.py /app/pythonpath/client_color_palettes.py
 COPY assets/superset/custom_user.py /app/superset/custom_user.py
@@ -42,9 +39,4 @@ COPY assets/superset/templates/superset/basic.html /app/superset/templates/super
 COPY assets/superset/daos/log.py /app/superset/daos/log.py
 COPY assets/superset/static/assets/images/logo.png /app/superset/static/assets/images/logo.png
 
-# Optional: additional script
-# Uncomment and customize the following line if needed
 # COPY scripts/uploadusers.py /app/uploadusers.py
-
-# Optional: replace the logo if needed
-COPY assets/logo.png /app/superset/static/assets/images/logo.png

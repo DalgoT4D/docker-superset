@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build --tag tech4dev/superset3:0.33 .
+docker build --tag tech4dev/superset3:0.3 .
