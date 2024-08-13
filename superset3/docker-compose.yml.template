@@ -1,0 +1,62 @@
+version: "3.8"
+
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  superset:
+    env_file:
+      - superset.env
+    image: "{{SUPERSET_IMAGE}}"
+    container_name: "{{SUPERSET_CONTAINER_NAME}}"
+    networks:
+      - app-network
+    ports:
+      - 80:8088
+    depends_on:
+      - superset_cache
+    volumes:
+      - ./host_data:/host_data/
+      - ./scripts:/scripts/
+      - ./logs:/logs/
+
+  superset_cache:
+    image: redis
+    networks:
+      - app-network
+
+  celery-beat:
+    image: "{{SUPERSET_IMAGE}}"
+    command: celery --app=superset.tasks.celery_app:app beat -s /app/superset_home/celerybeat_schedule
+    env_file:
+      - superset.env
+    depends_on:
+      - "{{SUPERSET_CONTAINER_NAME}}"
+    restart: always
+    networks:
+      - app-network
+
+  celery-worker:
+    image: "{{SUPERSET_IMAGE}}"
+    command: celery --app=superset.tasks.celery_app:app worker --pool=prefork -O fair -c 4
+    env_file:
+      - superset.env
+    depends_on:
+      - "{{SUPERSET_CONTAINER_NAME}}"
+    restart: always
+    networks:
+      - app-network
+
+  celery-flower:
+    image: "{{SUPERSET_IMAGE}}"
+    command: celery --app=superset.tasks.celery_app:app flower
+    env_file:
+      - superset.env
+    depends_on:
+      - "{{SUPERSET_CONTAINER_NAME}}"
+    restart: always
+    ports:
+      - 5555:5555
+    networks:
+      - app-network
