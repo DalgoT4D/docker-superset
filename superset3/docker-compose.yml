@@ -9,7 +9,7 @@ services:
     env_file:
       - superset.env
     image: "tech4dev/superset3:0.3"
-    container_name: "superset-client1"
+    container_name: "superset3"
     networks:
       - app-network
     ports:
@@ -32,7 +32,7 @@ services:
     env_file:
       - superset.env
     depends_on:
-      - "superset-client1"
+      - "superset3"
     restart: always
     networks:
       - app-network
@@ -43,7 +43,7 @@ services:
     env_file:
       - superset.env
     depends_on:
-      - "superset-client1"
+      - "superset3"
     restart: always
     networks:
       - app-network
@@ -54,7 +54,7 @@ services:
     env_file:
       - superset.env
     depends_on:
-      - "superset-client1"
+      - "superset3"
     restart: always
     ports:
       - 5555:5555
