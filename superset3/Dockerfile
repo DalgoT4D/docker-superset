@@ -1,4 +1,7 @@
-FROM apache/superset:3.1.3
+# FROM apache/superset:3.1.3
+
+# this is from shamoon's , this is added as new everything machine supports this architecture.
+FROM apache/superset:3.1.0-py310-arm  
 
 # Switching to root to install the required packages
 USER root
