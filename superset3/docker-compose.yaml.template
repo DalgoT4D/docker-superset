@@ -8,12 +8,12 @@ services:
   superset:
     env_file:
       - superset.env
-    image: "tech4dev/superset3:0.2"
-    container_name: superset
+    image: "{{SUPERSET_IMAGE}}"
+    container_name: "{{SUPERSET_CONTAINER_NAME}}"
     networks:
       - app-network
     ports:
-      - 80:8088
+      - 8082:8088
     depends_on:
       - superset_cache
     volumes:
@@ -27,34 +27,34 @@ services:
       - app-network
 
   celery-beat:
-    image: tech4dev/superset3:0.2
+    image: "{{SUPERSET_IMAGE}}"
     command: celery --app=superset.tasks.celery_app:app beat -s /app/superset_home/celerybeat_schedule
     env_file:
       - superset.env
     depends_on:
-      - superset
+      - "{{SUPERSET_CONTAINER_NAME}}"
     restart: always
     networks:
       - app-network
 
   celery-worker:
-    image: tech4dev/superset3:0.2
+    image: "{{SUPERSET_IMAGE}}"
     command: celery --app=superset.tasks.celery_app:app worker --pool=prefork -O fair -c 4
     env_file:
       - superset.env
     depends_on:
-      - superset
+      - "{{SUPERSET_CONTAINER_NAME}}"
     restart: always
     networks:
       - app-network
 
   celery-flower:
-    image: tech4dev/superset3:0.2
+    image: "{{SUPERSET_IMAGE}}"
     command: celery --app=superset.tasks.celery_app:app flower
     env_file:
       - superset.env
     depends_on:
-      - superset
+      - "{{SUPERSET_CONTAINER_NAME}}"
     restart: always
     ports:
       - 5555:5555
