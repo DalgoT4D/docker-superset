@@ -5,7 +5,7 @@ from celery.schedules import crontab
 from flask_appbuilder.security.manager import AUTH_OAUTH
 from superset.custom_user import CustomSecurityManager
 
-import client_color_palettes
+import assets.pythonpath.client_color_palettes as client_color_palettes
 
 CUSTOM_SECURITY_MANAGER = CustomSecurityManager
 
