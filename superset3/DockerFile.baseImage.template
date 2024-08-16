@@ -31,10 +31,3 @@ RUN pip install --upgrade sqlalchemy-bigquery pandas_gbq google-auth
 
 # Switching back to using the `superset` user
 USER superset
-
-# Copy the entire assets directory into the /app directory while keeping the directory structure intact
-COPY assets/ /app/
-
-# Optional: additional script
-# Uncomment and customize the following line if needed
-# COPY scripts/uploadusers.py /app/uploadusers.py

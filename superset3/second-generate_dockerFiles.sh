@@ -3,17 +3,18 @@
 # ./generate_dockerFiles.sh "client1" "prod" "8088" "5555"
 
 # Ensure the correct number of arguments is provided
-if [ "$#" -ne 4 ]; then
-    echo "Usage: $0 <client_name> <project_or_env> <container_port> <celery_flower_port>"
+if [ "$#" -ne 6 ]; then
+    echo "Usage: $0 <client_name> <project_or_env> <base_image> <container_port> <celery_flower_port> <output_dir>"
     exit 1
 fi
 
 # Assign input parameters to variables
 CLIENT_NAME=$1
 PROJECT_OR_ENV=$2
-CONTAINER_PORT=$3
-CELERY_FLOWER_PORT=$4
-OUTPUT_DIR="second-script-output"
+BASE_IMAGE=$3
+CONTAINER_PORT=$4
+CELERY_FLOWER_PORT=$5
+OUTPUT_DIR=$6
 
 # Function to find the next available port starting from a given port number
 find_available_port() {
@@ -38,7 +39,6 @@ CONTAINER_PORT=$(find_available_port $CONTAINER_PORT)
 CELERY_FLOWER_PORT=$(find_available_port $CELERY_FLOWER_PORT)
 
 # Define the base image (automatically set)
-BASE_IMAGE=$(cat image_info.txt)
 
 # Define a unique container name using the client name and project/environment name
 SUPERSET_CONTAINER_NAME="${CLIENT_NAME}-${PROJECT_OR_ENV}"
@@ -48,7 +48,7 @@ mkdir -p $OUTPUT_DIR
 
 
 # Generate the Dockerfile by replacing placeholders in Dockerfile.template
-sed "s|{{BASE_IMAGE}}|$BASE_IMAGE|g" DockerFile.template > $OUTPUT_DIR/DockerFile
+sed "s|{{BASE_IMAGE}}|$BASE_IMAGE|g" DockerFile.finalImage.template > $OUTPUT_DIR/DockerFile
 
 # Generate the docker-compose.yml by replacing placeholders in docker-compose.yml.template
 sed -e "s|{{SUPERSET_IMAGE}}|$BASE_IMAGE|g" \
