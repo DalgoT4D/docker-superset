@@ -1,0 +1,15 @@
+# Use the specific Superset base image (inherited from the previous Dockerfile if needed)
+FROM {{BASE_IMAGE}}
+
+# Switching to root if needed for any additional configurations
+USER root
+
+# Copy the entire assets directory into the /app directory while keeping the directory structure intact
+COPY assets/ /app/
+
+# Optional: additional script
+# Uncomment and customize the following line if needed
+# COPY scripts/uploadusers.py /app/uploadusers.py
+
+# Switching back to using the `superset` user after copying files
+USER superset
