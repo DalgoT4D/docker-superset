@@ -47,6 +47,7 @@ SUPERSET_CONTAINER_NAME="${CLIENT_NAME}-${PROJECT_OR_ENV}"
 mkdir -p $OUTPUT_DIR
 mkdir $OUTPUT_DIR/assets
 cp -R assets/ $OUTPUT_DIR/assets
+cp superset.env.example $OUTPUT_DIR/superset.env
 
 # Generate the Dockerfile by replacing placeholders in Dockerfile.template
 sed "s|{{BASE_IMAGE}}|$BASE_IMAGE|g" DockerFile.client.template > $OUTPUT_DIR/DockerFile
