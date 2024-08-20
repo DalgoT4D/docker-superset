@@ -32,24 +32,21 @@ find_available_port() {
     echo $port
 }
 
-
-
 # Check and find available ports for both CONTAINER_PORT and CELERY_FLOWER_PORT
 CONTAINER_PORT=$(find_available_port $CONTAINER_PORT)
 CELERY_FLOWER_PORT=$(find_available_port $CELERY_FLOWER_PORT)
-
-# Define the base image (automatically set)
 
 # Define a unique container name using the client name and project/environment name
 SUPERSET_CONTAINER_NAME="${CLIENT_NAME}-${PROJECT_OR_ENV}"
 
 # Create the output directory if it doesn't exist
 mkdir -p $OUTPUT_DIR
-mkdir $OUTPUT_DIR/assets
+mkdir -p $OUTPUT_DIR/assets
 cp -R assets/ $OUTPUT_DIR/assets
+cp -R host_data/ $OUTPUT_DIR/host_data
 cp superset.env.example $OUTPUT_DIR/superset.env
 
-# Generate the Dockerfile by replacing placeholders in Dockerfile.template
+# Generate the Dockerfile by replacing placeholders in DockerFile.client.template
 sed "s|{{BASE_IMAGE}}|$BASE_IMAGE|g" DockerFile.client.template > $OUTPUT_DIR/DockerFile
 
 # Generate the docker-compose.yml by replacing placeholders in docker-compose.yml.template
@@ -59,8 +56,26 @@ sed -e "s|{{SUPERSET_IMAGE}}|$BASE_IMAGE|g" \
     -e "s|{{CELERY_FLOWER_PORT}}|$CELERY_FLOWER_PORT|g" \
     docker-compose.yml.template > $OUTPUT_DIR/docker-compose.yml
 
+# Generate the shell script with the required commands
+SCRIPT_PATH="$OUTPUT_DIR/start-superset.sh"
+cat <<EOF > $SCRIPT_PATH
+#!/bin/sh
+
+set -o allexport
+source superset.env
+set +o allexport
+
+docker exec -it superset-${SUPERSET_CONTAINER_NAME} superset db upgrade
+docker exec -it superset-${SUPERSET_CONTAINER_NAME} superset fab create-admin --username \${SUPERSET_ADMIN_USERNAME} --password \${SUPERSET_ADMIN_PASSWORD} --firstname Superset --lastname Admin --email \${SUPERSET_ADMIN_EMAIL}
+docker exec -it superset-${SUPERSET_CONTAINER_NAME} superset init
+EOF
+
+# Make the script executable
+chmod +x $SCRIPT_PATH
+
 # Notify the user of successful generation
-echo "Generated Dockerfile and docker-compose.yml for client $CLIENT_NAME, project $PROJECT_OR_ENV in $OUTPUT_DIR"
+echo "Generated Dockerfile, docker-compose.yml, and setup script for client $CLIENT_NAME, project $PROJECT_OR_ENV in $OUTPUT_DIR"
 echo "Assigned ports: Superset UI - $CONTAINER_PORT, Celery Flower - $CELERY_FLOWER_PORT"
+echo "Setup script generated at: $SCRIPT_PATH"
 
 exit 0 # Explicitly exit with status 0 to indicate success
