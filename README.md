@@ -31,7 +31,7 @@ if the `file` is available at `/app/superset/static/path/to/file` within the Doc
    b. make-client
 
  ### A. make-t4d 
- #### Note: This scirpt will only be used once or when we update the docker image. Once the image is pushed to dockerhub, then the dockerfile in make-client will fetch this image and we can create different supersets for different clients. 
+ #### Note: This script will only be used once or when we update the docker image. Once the image is pushed to dockerhub, then the dockerfile in make-client will fetch this image and we can create different supersets for different clients. 
 - The make-t4d contains the the script to make dockerfile, build.sh and push.sh script.
 - This Dockerfile pull the base apache/supserst:<version> image, and install the required python packages, and creates a docker image which will be the base image for the client specific Dockerfile in make-client folder.
   
