@@ -8,7 +8,7 @@ services:
   superset-{{SUPERSET_CONTAINER_NAME}}:
     env_file:
       - superset.env
-    image: "{{SUPERSET_IMAGE}}"
+    image: t4d-superset-{{SUPERSET_CONTAINER_NAME}} 
     container_name: superset-{{SUPERSET_CONTAINER_NAME}}
     networks:
       - app-network-{{SUPERSET_CONTAINER_NAME}}
@@ -60,4 +60,3 @@ services:
       - {{CELERY_FLOWER_PORT}}:5555
     networks:
       - app-network-{{SUPERSET_CONTAINER_NAME}}
-      

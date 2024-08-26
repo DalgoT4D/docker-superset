@@ -1,6 +1,6 @@
 #!/bin/bash
 # Usage example:
-# ./generate_dockerFiles.sh "client1" "prod" "8088" "5555"
+# ./generate_dockerFiles.sh "client1" "prod" "base_image_name" "8088" "5555" "output_directory"
 
 # Ensure the correct number of arguments is provided
 if [ "$#" -ne 6 ]; then
@@ -47,7 +47,7 @@ cp -R host_data/ $OUTPUT_DIR/host_data
 cp superset.env.example $OUTPUT_DIR/superset.env
 
 # Generate the Dockerfile by replacing placeholders in DockerFile.client.template
-sed "s|{{BASE_IMAGE}}|$BASE_IMAGE|g" DockerFile.client.template > $OUTPUT_DIR/DockerFile
+sed "s|{{BASE_IMAGE}}|$BASE_IMAGE|g" Dockerfile.client.template > $OUTPUT_DIR/Dockerfile
 
 # Generate the docker-compose.yml by replacing placeholders in docker-compose.yml.template
 sed -e "s|{{SUPERSET_IMAGE}}|$BASE_IMAGE|g" \
@@ -73,9 +73,31 @@ EOF
 # Make the script executable
 chmod +x $SCRIPT_PATH
 
+# Generate the build script
+BUILD_SCRIPT_PATH="$OUTPUT_DIR/build.sh"
+cat <<EOF > $BUILD_SCRIPT_PATH
+#!/bin/bash
+
+# Ensure the script stops if any command fails
+set -e
+
+# Define variables
+IMAGE_NAME="t4d-${CLIENT_NAME}-${PROJECT_OR_ENV}"  # Dynamic image name
+
+# Build the Docker image
+echo "Building Docker image: \$IMAGE_NAME"
+docker build --tag \$IMAGE_NAME .
+
+echo "Docker image built successfully: \$IMAGE_NAME"
+EOF
+
+# Make the build script executable
+chmod +x $BUILD_SCRIPT_PATH
+
 # Notify the user of successful generation
-echo "Generated Dockerfile, docker-compose.yml, and setup script for client $CLIENT_NAME, project $PROJECT_OR_ENV in $OUTPUT_DIR"
+echo "Generated Dockerfile, docker-compose.yml, setup script, and build script for client $CLIENT_NAME, project $PROJECT_OR_ENV in $OUTPUT_DIR"
 echo "Assigned ports: Superset UI - $CONTAINER_PORT, Celery Flower - $CELERY_FLOWER_PORT"
 echo "Setup script generated at: $SCRIPT_PATH"
+echo "Build script generated at: $BUILD_SCRIPT_PATH"
 
 exit 0 # Explicitly exit with status 0 to indicate success
