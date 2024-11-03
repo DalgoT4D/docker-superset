@@ -42,8 +42,8 @@ SUPERSET_CONTAINER_NAME="${CLIENT_NAME}-${PROJECT_OR_ENV}"
 # Create the output directory if it doesn't exist
 mkdir -p $OUTPUT_DIR
 mkdir -p $OUTPUT_DIR/assets
-cp -R assets/ $OUTPUT_DIR/assets
-cp -R host_data/ $OUTPUT_DIR/host_data
+cp -R assets/. $OUTPUT_DIR/assets
+cp -R host_data/. $OUTPUT_DIR/host_data
 cp superset.env.example $OUTPUT_DIR/superset.env
 
 # Generate the Dockerfile by replacing placeholders in DockerFile.client.template
