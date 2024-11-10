@@ -2,8 +2,8 @@
 # Usage: ./generate-make-t4d.sh "apache/superset:3.1.arm" "tech4dev/superset:0.41" "output_folder"
 
 # Check if the correct number of arguments are provided
-if [ "$#" -ne 3 ]; then
-    echo "Usage: $0 <base_image> <output_image> <output_folder>"
+if [ "$#" -ne 4 ]; then
+    echo "Usage: $0 <base_image> <output_image> <output_folder> <arch_type linux/amd64 or linux/arm64>"
     exit 1
 fi
 
@@ -11,6 +11,7 @@ fi
 BASE_IMAGE=$1
 OUTPUT_IMAGE=$2
 OUTPUT_FOLDER=$3
+ARCH_TYPE=$4
 DOCKERFILE_TEMPLATE="Dockerfile.t4d.template"
 
 # Check if the Dockerfile template exists
@@ -23,7 +24,9 @@ fi
 mkdir -p $OUTPUT_FOLDER
 
 # Generate the Dockerfile from the template
-sed "s|{{BASE_IMAGE}}|$BASE_IMAGE|g" $DOCKERFILE_TEMPLATE > ${OUTPUT_FOLDER}/Dockerfile
+sed -e "s|{{BASE_IMAGE}}|$BASE_IMAGE|g" \
+    -e "s|{{ARCH_TYPE}}|$ARCH_TYPE|g" \
+    $DOCKERFILE_TEMPLATE > ${OUTPUT_FOLDER}/Dockerfile
 echo "Dockerfile generated successfully in $OUTPUT_FOLDER!"
 
 # Generate the build script
