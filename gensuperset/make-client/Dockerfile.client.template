@@ -1,5 +1,5 @@
 # Use the specific Superset base image (inherited from the previous Dockerfile if needed)
-FROM {{BASE_IMAGE}}
+FROM --platform={{ARCH_TYPE}} {{BASE_IMAGE}} 
 
 # Switching to root if needed for any additional configurations
 USER root
