@@ -4,7 +4,8 @@
 
 # Ensure the correct number of arguments is provided
 if [ "$#" -ne 9 ]; then
-    echo "Usage: $0 <client_name> <project_or_env> <superset_baseImage> <superset_version> <output_image_tag> <conatiner_port> <celery_flower_port> <arch_type> <output_dir>"
+    echo "Usage: $0 <client_name> <project_or_env> <superset_baseImage> <superset_version> <output_image_tag> <container_port> <celery_flower_port> <arch_type> <output_dir>"
+    echo "Usage: $0 "demo_ngo" "prod" "tech4dev/superset:4.0.1" "3 or4" "0.1/latest/0.1-arm" "8088" "5555" "linux/amd64 or linux/arm64"  "../../demo_ngo""
     exit 1
 fi
 
@@ -41,7 +42,6 @@ find_available_port() {
     echo "Failed to find an available port after $max_attempts attempts." >&2
     exit 1
 }
-
 
 # Check and find available ports for both CONTAINER_PORT and CELERY_FLOWER_PORT
 CONTAINER_PORT=$(find_available_port $CONTAINER_PORT)
@@ -99,18 +99,43 @@ IMAGE_NAME=${OUTPUT_BASE_IMAGE}  # Dynamic image name
 
 # Build the Docker image
 echo "Building Docker image: \$IMAGE_NAME"
-docker build --tag \$IMAGE_NAME .
-
-echo "Docker image built successfully: \$IMAGE_NAME"
+if docker build --tag \$IMAGE_NAME .; then
+    echo "Docker image built successfully: \$IMAGE_NAME"
+else
+    echo "Error: Failed to build Docker image: \$IMAGE_NAME"
+    exit 1
+fi
 EOF
 
 # Make the build script executable
 chmod +x $BUILD_SCRIPT_PATH
 
+# Generate the push script
+PUSH_SCRIPT_PATH="$OUTPUT_DIR/push.sh"
+cat <<EOF > $PUSH_SCRIPT_PATH
+#!/bin/bash
+
+# Define variables
+IMAGE_NAME=${OUTPUT_BASE_IMAGE}  # Dynamic image name
+
+# Push the Docker image
+echo "Pushing Docker image: \$IMAGE_NAME"
+if docker push \$IMAGE_NAME; then
+    echo "Docker image pushed successfully: \$IMAGE_NAME"
+else
+    echo "Error: Failed to push Docker image: \$IMAGE_NAME"
+    exit 1
+fi
+EOF
+
+# Make the push script executable
+chmod +x $PUSH_SCRIPT_PATH
+
 # Notify the user of successful generation
-echo "Generated Dockerfile, docker-compose.yml, setup script, and build script for client $CLIENT_NAME, project $PROJECT_OR_ENV in $OUTPUT_DIR"
+echo "Generated Dockerfile, docker-compose.yml, setup script, build script, and push script for client $CLIENT_NAME, project $PROJECT_OR_ENV in $OUTPUT_DIR"
 echo "Assigned ports: Superset UI - $CONTAINER_PORT, Celery Flower - $CELERY_FLOWER_PORT"
 echo "Setup script generated at: $SCRIPT_PATH"
 echo "Build script generated at: $BUILD_SCRIPT_PATH"
+echo "Push script generated at: $PUSH_SCRIPT_PATH"
 
 exit 0 # Explicitly exit with status 0 to indicate success
