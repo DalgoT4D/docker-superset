@@ -110,32 +110,11 @@ EOF
 # Make the build script executable
 chmod +x $BUILD_SCRIPT_PATH
 
-# Generate the push script
-PUSH_SCRIPT_PATH="$OUTPUT_DIR/push.sh"
-cat <<EOF > $PUSH_SCRIPT_PATH
-#!/bin/bash
-
-# Define variables
-IMAGE_NAME=${OUTPUT_BASE_IMAGE}  # Dynamic image name
-
-# Push the Docker image
-echo "Pushing Docker image: \$IMAGE_NAME"
-if docker push \$IMAGE_NAME; then
-    echo "Docker image pushed successfully: \$IMAGE_NAME"
-else
-    echo "Error: Failed to push Docker image: \$IMAGE_NAME"
-    exit 1
-fi
-EOF
-
-# Make the push script executable
-chmod +x $PUSH_SCRIPT_PATH
 
 # Notify the user of successful generation
-echo "Generated Dockerfile, docker-compose.yml, setup script, build script, and push script for client $CLIENT_NAME, project $PROJECT_OR_ENV in $OUTPUT_DIR"
+echo "Generated Dockerfile, docker-compose.yml, setup script and build script for client $CLIENT_NAME, project $PROJECT_OR_ENV in $OUTPUT_DIR"
 echo "Assigned ports: Superset UI - $CONTAINER_PORT, Celery Flower - $CELERY_FLOWER_PORT"
 echo "Setup script generated at: $SCRIPT_PATH"
 echo "Build script generated at: $BUILD_SCRIPT_PATH"
-echo "Push script generated at: $PUSH_SCRIPT_PATH"
 
 exit 0 # Explicitly exit with status 0 to indicate success
