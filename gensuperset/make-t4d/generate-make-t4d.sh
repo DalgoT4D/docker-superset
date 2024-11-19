@@ -3,7 +3,11 @@
 
 # Check if the correct number of arguments are provided
 if [ "$#" -ne 4 ]; then
+    if [ "$#" -ne 4 ]; then
     echo "Usage: $0 <base_image> <output_image> <output_folder> <arch_type linux/amd64 or linux/arm64>"
+    echo "Example: $0 apache/superset:4.0.1 tech4dev/superset:4.0.1 or tech4dev/superset:4.0.1-arm ../../Output linux/arm64 or linux/amd64"
+    exit 1
+fi
     exit 1
 fi
 
@@ -34,7 +38,12 @@ cat <<EOF > ${OUTPUT_FOLDER}/build-image.sh
 #!/bin/bash
 # Build the Docker image
 docker build -t $OUTPUT_IMAGE .
-echo "Docker image $OUTPUT_IMAGE built successfully!"
+if [ "\$?" -eq 0 ]; then
+    echo "Docker image $OUTPUT_IMAGE built successfully!"
+else
+    echo "Error: Docker image $OUTPUT_IMAGE failed to build."
+    exit 1
+fi
 EOF
 
 echo "Build script generated successfully in $OUTPUT_FOLDER!"
@@ -47,7 +56,12 @@ cat <<EOF > ${OUTPUT_FOLDER}/push-image.sh
 #!/bin/bash
 # Push the Docker image to the registry
 docker push $OUTPUT_IMAGE
-echo "Docker image $OUTPUT_IMAGE pushed successfully!"
+if [ "\$?" -eq 0 ]; then
+    echo "Docker image $OUTPUT_IMAGE pushed successfully!"
+else
+    echo "Error: Docker image $OUTPUT_IMAGE failed to push."
+    exit 1
+fi
 EOF
 
 echo "Push script generated successfully in $OUTPUT_FOLDER!"
