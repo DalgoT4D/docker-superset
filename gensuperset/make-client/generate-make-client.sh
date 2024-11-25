@@ -3,8 +3,9 @@
 # ./generate_dockerFiles.sh "client1" "prod" "base_image_name" "8088" "5555" "output_directory"
 
 # Ensure the correct number of arguments is provided
-if [ "$#" -ne 6 ]; then
-    echo "Usage: $0 <client_name> <project_or_env> <base_image> <container_port> <celery_flower_port> <output_dir>"
+if [ "$#" -ne 9 ]; then
+    echo "Usage: $0 <client_name> <project_or_env> <superset_baseImage> <superset_version> <output_image_tag> <container_port> <celery_flower_port> <arch_type> <output_dir>"
+    echo "Usage: $0 "demo_ngo" "prod" "tech4dev/superset:4.0.1" "3 or4" "0.1/latest/0.1-arm" "8088" "5555" "linux/amd64 or linux/arm64"  "../../demo_ngo""
     exit 1
 fi
 
@@ -12,24 +13,34 @@ fi
 CLIENT_NAME=$1
 PROJECT_OR_ENV=$2
 BASE_IMAGE=$3
-CONTAINER_PORT=$4
-CELERY_FLOWER_PORT=$5
-OUTPUT_DIR=$6
+SUPERSET_VERSION=$4
+OUTPUT_IMAGE_TAG=$5
+CONTAINER_PORT=$6
+CELERY_FLOWER_PORT=$7
+ARCH_TYPE=$8
+OUTPUT_DIR=$9
+
+OUTPUT_BASE_IMAGE="t4d/superset-${CLIENT_NAME}-${PROJECT_OR_ENV}-${SUPERSET_VERSION}:${OUTPUT_IMAGE_TAG}" 
 
 # Function to find the next available port starting from a given port number
 find_available_port() {
     local port=$1
     local max_attempts=100 # Maximum number of attempts to find an available port
     local attempt=0
-    while lsof -i :$port -sTCP:LISTEN >/dev/null 2>&1; do
+    
+    while [ $attempt -lt $max_attempts ]; do
+        # Check if the port is in use
+        if ! ss -tuln | grep -q ":$port\b"; then
+            echo $port
+            return 0
+        fi
+        # Increment port and attempt counter
         port=$((port + 1))
         attempt=$((attempt + 1))
-        if [ "$attempt" -ge "$max_attempts" ]; then
-            echo "Failed to find an available port after $max_attempts attempts." >&2
-            exit 1
-        fi
     done
-    echo $port
+
+    echo "Failed to find an available port after $max_attempts attempts." >&2
+    exit 1
 }
 
 # Check and find available ports for both CONTAINER_PORT and CELERY_FLOWER_PORT
@@ -37,20 +48,22 @@ CONTAINER_PORT=$(find_available_port $CONTAINER_PORT)
 CELERY_FLOWER_PORT=$(find_available_port $CELERY_FLOWER_PORT)
 
 # Define a unique container name using the client name and project/environment name
-SUPERSET_CONTAINER_NAME="${CLIENT_NAME}-${PROJECT_OR_ENV}"
+SUPERSET_CONTAINER_NAME="${CLIENT_NAME}-${PROJECT_OR_ENV}-${SUPERSET_VERSION}"
 
 # Create the output directory if it doesn't exist
 mkdir -p $OUTPUT_DIR
 mkdir -p $OUTPUT_DIR/assets
-cp -R assets/ $OUTPUT_DIR/assets
-cp -R host_data/ $OUTPUT_DIR/host_data
+cp -R assets/. $OUTPUT_DIR/assets
+cp -R host_data/. $OUTPUT_DIR/host_data
 cp superset.env.example $OUTPUT_DIR/superset.env
 
 # Generate the Dockerfile by replacing placeholders in DockerFile.client.template
-sed "s|{{BASE_IMAGE}}|$BASE_IMAGE|g" Dockerfile.client.template > $OUTPUT_DIR/Dockerfile
+sed -e "s|{{BASE_IMAGE}}|$BASE_IMAGE|g" \
+    -e "s|{{ARCH_TYPE}}|$ARCH_TYPE|g" \
+    Dockerfile.client.template > "$OUTPUT_DIR/Dockerfile"
 
 # Generate the docker-compose.yml by replacing placeholders in docker-compose.yml.template
-sed -e "s|{{SUPERSET_IMAGE}}|$BASE_IMAGE|g" \
+sed -e "s|{{OUTPUT_BASE_IMAGE}}|$OUTPUT_BASE_IMAGE|g" \
     -e "s|{{SUPERSET_CONTAINER_NAME}}|$SUPERSET_CONTAINER_NAME|g" \
     -e "s|{{CONTAINER_PORT}}|$CONTAINER_PORT|g" \
     -e "s|{{CELERY_FLOWER_PORT}}|$CELERY_FLOWER_PORT|g" \
@@ -82,20 +95,24 @@ cat <<EOF > $BUILD_SCRIPT_PATH
 set -e
 
 # Define variables
-IMAGE_NAME="t4d-${CLIENT_NAME}-${PROJECT_OR_ENV}"  # Dynamic image name
+IMAGE_NAME=${OUTPUT_BASE_IMAGE}  # Dynamic image name
 
 # Build the Docker image
 echo "Building Docker image: \$IMAGE_NAME"
-docker build --tag \$IMAGE_NAME .
-
-echo "Docker image built successfully: \$IMAGE_NAME"
+if docker build --tag \$IMAGE_NAME .; then
+    echo "Docker image built successfully: \$IMAGE_NAME"
+else
+    echo "Error: Failed to build Docker image: \$IMAGE_NAME"
+    exit 1
+fi
 EOF
 
 # Make the build script executable
 chmod +x $BUILD_SCRIPT_PATH
 
+
 # Notify the user of successful generation
-echo "Generated Dockerfile, docker-compose.yml, setup script, and build script for client $CLIENT_NAME, project $PROJECT_OR_ENV in $OUTPUT_DIR"
+echo "Generated Dockerfile, docker-compose.yml, setup script and build script for client $CLIENT_NAME, project $PROJECT_OR_ENV in $OUTPUT_DIR"
 echo "Assigned ports: Superset UI - $CONTAINER_PORT, Celery Flower - $CELERY_FLOWER_PORT"
 echo "Setup script generated at: $SCRIPT_PATH"
 echo "Build script generated at: $BUILD_SCRIPT_PATH"

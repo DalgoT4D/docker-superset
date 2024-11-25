@@ -1,5 +1,8 @@
 # Use the specific Superset base image
-FROM {{BASE_IMAGE}}
+FROM --platform={{ARCH_TYPE}} {{BASE_IMAGE}} 
+
+# Define an argument for architecture type, with a default value filled by the templating system
+ARG ARCH_TYPE={{ARCH_TYPE}}
 
 # Switching to root to install the required packages
 USER root
@@ -9,13 +12,21 @@ RUN apt-get update && \
   apt-get install --no-install-recommends -y firefox-esr wget
 
 # Set the version for Geckodriver
-ENV GECKODRIVER_VERSION=0.29.0
+ENV GECKODRIVER_VERSION=0.35.0
 
-# Install Geckodriver
-RUN wget -q https://github.com/mozilla/geckodriver/releases/download/v${GECKODRIVER_VERSION}/geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz && \
-  tar -x geckodriver -zf geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz -O > /usr/bin/geckodriver && \
-  chmod 755 /usr/bin/geckodriver && \
-  rm geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz
+# Install Geckodriver with conditional architecture based on ARCH_TYPE
+RUN if [ "$ARCH_TYPE" = "linux/amd64" ]; then \
+      wget -q https://github.com/mozilla/geckodriver/releases/download/v${GECKODRIVER_VERSION}/geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz && \
+      tar -x geckodriver -zf geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz -O > /usr/bin/geckodriver && \
+      rm geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz; \
+    elif [ "$ARCH_TYPE" = "linux/arm64" ]; then \
+      wget -q https://github.com/mozilla/geckodriver/releases/download/v${GECKODRIVER_VERSION}/geckodriver-v${GECKODRIVER_VERSION}-linux-aarch64.tar.gz && \
+      tar -x geckodriver -zf geckodriver-v${GECKODRIVER_VERSION}-linux-aarch64.tar.gz -O > /usr/bin/geckodriver && \
+      rm geckodriver-v${GECKODRIVER_VERSION}-linux-aarch64.tar.gz; \
+    else \
+      echo "Unsupported architecture: $ARCH_TYPE" && exit 1; \
+    fi && \
+    chmod 755 /usr/bin/geckodriver
 
 # Upgrade pip
 RUN pip install --upgrade pip
