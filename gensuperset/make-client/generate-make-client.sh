@@ -5,7 +5,7 @@
 # Ensure the correct number of arguments is provided
 if [ "$#" -ne 9 ]; then
     echo "Usage: $0 <client_name> <project_or_env> <superset_baseImage> <superset_version> <output_image_tag> <container_port> <celery_flower_port> <arch_type> <output_dir>"
-    echo "Usage: $0 "demo_ngo" "prod" "tech4dev/superset:4.0.1" "3 or4" "0.1/latest/0.1-arm" "8088" "5555" "linux/amd64 or linux/arm64"  "../../demo_ngo""
+    echo "Usage: $0 <demo_ngo> <prod> <tech4dev/superset:4.0.1> <4> <0.1> <8088> <5555> <linux/amd64 or linux/arm64>  <../../demo_ngo>"
     exit 1
 fi
 
@@ -55,7 +55,18 @@ mkdir -p $OUTPUT_DIR
 mkdir -p $OUTPUT_DIR/assets
 cp -R assets/. $OUTPUT_DIR/assets
 cp -R host_data/. $OUTPUT_DIR/host_data
-cp superset.env.example $OUTPUT_DIR/superset.env
+
+
+
+# Define Redis host and broker URL
+REDIS_HOST="superset_cache-${SUPERSET_CONTAINER_NAME}"
+BROKER_URL="redis://${REDIS_HOST}:6379/0"
+
+# Replace placeholders in superset.env.example and generate superset.env
+sed -e "s|{{REDIS_HOST}}|$REDIS_HOST|g" \
+    -e "s|{{BROKER_URL}}|$BROKER_URL|g" \
+    superset.env.example > "$OUTPUT_DIR/superset.env"
+
 
 # Generate the Dockerfile by replacing placeholders in DockerFile.client.template
 sed -e "s|{{BASE_IMAGE}}|$BASE_IMAGE|g" \
