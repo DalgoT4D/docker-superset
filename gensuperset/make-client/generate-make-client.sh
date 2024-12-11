@@ -53,7 +53,10 @@ SUPERSET_CONTAINER_NAME="${CLIENT_NAME}-${PROJECT_OR_ENV}-${SUPERSET_VERSION}"
 # Create the output directory if it doesn't exist
 mkdir -p $OUTPUT_DIR
 mkdir -p $OUTPUT_DIR/assets
-cp -R assets/. $OUTPUT_DIR/assets
+
+# This copies everything from the assets folder except the template file.
+# We can exclude other files too by using multiple  --exclude flag.
+rsync -av --exclude "pythonpath/superset_config.py.template" assets/ $OUTPUT_DIR/assets
 cp -R host_data/. $OUTPUT_DIR/host_data
 
 
@@ -67,6 +70,13 @@ sed -e "s|{{REDIS_HOST}}|$REDIS_HOST|g" \
     -e "s|{{BROKER_URL}}|$BROKER_URL|g" \
     superset.env.example > "$OUTPUT_DIR/superset.env"
 
+
+# generating a superset_config.py from superset_config.py.template 
+SUPERSET_CONFIG_TEMPLATE="assets/pythonpath/superset_config.py.template"
+SUPERSET_CONFIG_OUTPUT="$OUTPUT_DIR/assets/pythonpath/superset_config.py"
+sed -e "s|{{WEBDRIVER_HOST}}|superset-${SUPERSET_CONTAINER_NAME}:8088/|g" \
+    $SUPERSET_CONFIG_TEMPLATE > $SUPERSET_CONFIG_OUTPUT
+    
 
 # Generate the Dockerfile by replacing placeholders in DockerFile.client.template
 sed -e "s|{{BASE_IMAGE}}|$BASE_IMAGE|g" \
