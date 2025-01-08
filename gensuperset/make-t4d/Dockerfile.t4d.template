@@ -32,9 +32,10 @@ RUN if [ "$ARCH_TYPE" = "linux/amd64" ]; then \
 RUN pip install --upgrade pip
 
 # Install the necessary Python packages
-RUN pip install --no-cache gevent psycopg2-binary redis celery flower pytz 
-RUN pip install --upgrade urllib3 requests botocore boto3 authlib python-dotenv flask_cors
+RUN pip install --no-cache gevent psycopg2-binary redis celery flower pytz
+RUN pip install --upgrade urllib3 requests botocore boto3 authlib python-dotenv
 RUN pip install --upgrade sqlalchemy-bigquery pandas_gbq google-auth
+
 # Example: installing a driver to connect to Redshift
 # Uncomment and customize the following line if needed
 # RUN pip install sqlalchemy-redshift
