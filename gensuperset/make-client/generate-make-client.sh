@@ -1,6 +1,6 @@
 #!/bin/bash
 # Usage example:
-# ./generate_dockerFiles.sh "client1" "prod" "base_image_name" "8088" "5555" "output_directory"
+# ./generate_dockerFiles.sh <demo_ngo> <prod> <tech4dev/superset:4.0.1> <4> <0.1> <8088> <5555> <linux/amd64 or linux/arm64>  <../../demo_ngo>"
 
 # Ensure the correct number of arguments is provided
 if [ "$#" -ne 9 ]; then

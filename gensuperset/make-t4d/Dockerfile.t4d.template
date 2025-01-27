@@ -11,6 +11,8 @@ USER root
 RUN apt-get update && \
   apt-get install --no-install-recommends -y firefox-esr wget
 
+# Superset version 4.1.1 required this package.
+RUN pip install flask_cors  
 # Set the version for Geckodriver
 ENV GECKODRIVER_VERSION=0.35.0
 
