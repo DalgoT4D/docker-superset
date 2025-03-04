@@ -212,7 +212,9 @@ TALISMAN_CONFIG = {
             "self",
             "http://localhost:3000",
             "https://staging.dalgo.in",
+            "https://staging.dalgo.org",
             "https://dashboard.dalgo.in",
+            "https://dashboard.dalgo.org",
         ],
     },
 }
