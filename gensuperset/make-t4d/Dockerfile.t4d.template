@@ -7,40 +7,42 @@ ARG ARCH_TYPE={{ARCH_TYPE}}
 # Switching to root to install the required packages
 USER root
 
+# Set environment variable for Playwright
+ENV PLAYWRIGHT_BROWSERS_PATH=/usr/local/share/playwright-browsers
+
 # Install system packages
-RUN apt-get update && \
-  apt-get install --no-install-recommends -y firefox-esr wget
+RUN apt-get update && 
+# RUN apt-get update && \
+#   apt-get install --no-install-recommends -y firefox-esr wget
 
 # Superset version 4.1.1 required this package.
-RUN pip install flask_cors  
-# Set the version for Geckodriver
-ENV GECKODRIVER_VERSION=0.35.0
-
-# Install Geckodriver with conditional architecture based on ARCH_TYPE
-RUN if [ "$ARCH_TYPE" = "linux/amd64" ]; then \
-      wget -q https://github.com/mozilla/geckodriver/releases/download/v${GECKODRIVER_VERSION}/geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz && \
-      tar -x geckodriver -zf geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz -O > /usr/bin/geckodriver && \
-      rm geckodriver-v${GECKODRIVER_VERSION}-linux64.tar.gz; \
-    elif [ "$ARCH_TYPE" = "linux/arm64" ]; then \
-      wget -q https://github.com/mozilla/geckodriver/releases/download/v${GECKODRIVER_VERSION}/geckodriver-v${GECKODRIVER_VERSION}-linux-aarch64.tar.gz && \
-      tar -x geckodriver -zf geckodriver-v${GECKODRIVER_VERSION}-linux-aarch64.tar.gz -O > /usr/bin/geckodriver && \
-      rm geckodriver-v${GECKODRIVER_VERSION}-linux-aarch64.tar.gz; \
-    else \
-      echo "Unsupported architecture: $ARCH_TYPE" && exit 1; \
-    fi && \
-    chmod 755 /usr/bin/geckodriver
 
 # Upgrade pip
 RUN pip install --upgrade pip
 
-# Install the necessary Python packages
-RUN pip install --no-cache gevent psycopg2-binary redis celery flower pytz
-RUN pip install --upgrade urllib3 requests botocore boto3 authlib python-dotenv
-RUN pip install --upgrade sqlalchemy-bigquery pandas_gbq google-auth
+# Install packages using uv into the virtual environment
+RUN . /app/.venv/bin/activate && \
+    uv pip install \
+    # install psycopg2 for using PostgreSQL metadata store - could be a MySQL package if using that backend:
+    psycopg2-binary pymssql sqlalchemy-bigquery pandas-gbq asyncpg \
+      # packages needed for various Superset features:  
+    google-auth python-dotenv urllib3 requests botocore python-dotenv redis celery flower pytz\
 
-# Example: installing a driver to connect to Redshift
-# Uncomment and customize the following line if needed
-# RUN pip install sqlalchemy-redshift
+    # package needed for using single-sign on authentication:
+    Authlib \
+    # openpyxl to be able to upload Excel files
+    openpyxl \
+    # Pillow for Alerts & Reports to generate PDFs of dashboards
+    Pillow \
+    # install Playwright for taking screenshots for Alerts & Reports. This assumes the feature flag PLAYWRIGHT_REPORTS_AND_THUMBNAILS is enabled
+    # That feature flag will default to True starting in 6.0.0
+    # Playwright works only with Chrome.
+    # If you are still using Selenium instead of Playwright, you would instead install here the selenium package and a headless browser & webdriver
+    playwright \
+    && playwright install-deps \
+    && PLAYWRIGHT_BROWSERS_PATH=/usr/local/share/playwright-browsers playwright install chromium
+
+
 
 # Switching back to using the `superset` user
 USER superset
