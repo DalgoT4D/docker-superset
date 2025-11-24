@@ -11,11 +11,17 @@ USER root
 ENV PLAYWRIGHT_BROWSERS_PATH=/usr/local/share/playwright-browsers
 
 # Install system packages
-RUN apt-get update && 
-# RUN apt-get update && \
-#   apt-get install --no-install-recommends -y firefox-esr wget
+RUN apt-get update && apt-get install -y \
+    python3-dev \
+    default-libmysqlclient-dev \
+    build-essential \
+    pkg-config \
+    libssl-dev \
+    libffi-dev \
+    python3-pip \
+    libsasl2-dev \
+    libldap2-dev
 
-# Superset version 4.1.1 required this package.
 
 # Upgrade pip
 RUN pip install --upgrade pip
@@ -24,7 +30,7 @@ RUN pip install --upgrade pip
 RUN . /app/.venv/bin/activate && \
     uv pip install \
     # install psycopg2 for using PostgreSQL metadata store - could be a MySQL package if using that backend:
-    psycopg2-binary pymssql sqlalchemy-bigquery pandas-gbq asyncpg \
+    psycopg2-binary pymssql sqlalchemy-bigquery pandas-gbq flask_cors Flask-Mail asyncpg \
       # packages needed for various Superset features:  
     google-auth python-dotenv urllib3 requests botocore python-dotenv redis celery flower pytz\
 
