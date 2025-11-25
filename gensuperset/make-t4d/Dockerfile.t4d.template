@@ -20,7 +20,8 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     python3-pip \
     libsasl2-dev \
-    libldap2-dev
+    libldap2-dev \
+    chromium-driver
 
 
 # Upgrade pip
