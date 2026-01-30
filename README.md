@@ -1,48 +1,90 @@
 # docker-superset
-Superset for DDP: docker image build and container startup
+
+Superset for DDP: Docker image build and container startup for Dalgo.
+
+## Project Structure
 
 ```
-sh build.sh
-docker compose up
-sh start-superset.sh
+docker-superset/
+└── t4d-superset-base-image/
+    ├── assets/
+    │   └── superset/
+    │       ├── jinja_context.py      # Custom Jinja functions (current_blob, etc.)
+    │       ├── templates/            # Custom HTML templates
+    │       └── daos/                 # Custom data access objects
+    ├── Dockerfile.t4d.template       # Docker template file
+    └── generate-make-t4d.sh          # Script to generate Dockerfile and build script
 ```
 
-### Row Level Security
-- Filter clause is
-    `coid =('{{current_blob()}}'::json->>'coid')::integer`
+## Building the T4D Superset Base Image
 
-- Apply this filter to the roles specified in the filter definition. We will create a "Community Organizer" role for SNEHA
+The `t4d-superset-base-image` folder contains everything needed to build the Tech4Dev Superset base image.
 
-### Docker image
-The base image for Superset 3 is 
-- `apache/superset:3.1.0rc3` for x86
-- `apache/superset:3.1.0-py310-arm` for ARM
+### What the Template Does
 
-The `Dockerfile` may need to be edited for the architecture you choose
+The `Dockerfile.t4d.template` takes a base Apache Superset image and:
+1. Installs required system packages (chromium-driver, build tools, etc.)
+2. Installs Python packages (psycopg2, Authlib, Playwright, etc.)
+3. Copies custom assets:
+   - `jinja_context.py` - Provides custom Jinja functions like `current_blob()` for Row Level Security
+   - `templates/` - Custom HTML templates for UI modifications
+   - `daos/` - Custom data access objects
 
-### Static assets
-Superset will serve static assets at `https://<superset_url>/static/path/to/file`
+### Generate and Build
 
-if the `file` is available at `/app/superset/static/path/to/file` within the Docker container.
+```bash
+cd t4d-superset-base-image
 
-### GENERATE SUPERSET FOR CLIENTS USING TEMPLATES
-- Inside gensuperset there are two folders
-   a. make-t4d
-   b. make-client
+# Generate Dockerfile and build script
+sh generate-make-t4d.sh <base_image> <output_image>
 
- ### A. make-t4d 
- #### Note: This script will only be used once or when we update the docker image. Once the image is pushed to dockerhub, then the dockerfile in make-client will fetch this image and we can create different supersets for different clients. 
-- The make-t4d contains the the script to make dockerfile, build.sh and push.sh script.
-- This Dockerfile pull the base apache/supserst:<version> image, and install the required python packages, and creates a docker image which will be the base image for the client specific Dockerfile in make-client folder.
-  
--  command: sh generate-make-t4d.sh "apache/superset:<version><architecture>" "<output_base_image>" "<output_folder>"
+# Example:
+sh generate-make-t4d.sh "apache/superset:4.0.1" "tech4dev/superset:4.0.1"
+```
 
-###  B. make-client
-- Here the generate script will generate a full fleged superset folder that is customised specifically to the client.
-- The dockerfile uses the base image created and pushed to docker hub in the above step.
-- The build.sh script creates a new image that will remain on the system, and will be used by docker-compose.yml file to run the container.
+This generates:
+- `Dockerfile` - Ready-to-build Dockerfile from the template
+- `build-image.sh` - Script to build and push the multi-architecture image
 
-- command:  sh generate-make-client.sh <client_name> <project_or_env> <base_image> <container_port> <celery_flower_port> <output_dir>
+### Building Multi-Architecture Images
 
-For detail documentation on how we are customizing superset for Dalgo-> read 
-[Link_to_the_documentation](https://docs.google.com/document/d/1l24tphe8iv1dQkIZ4s4xQIQu1vCB33YLCrjwSvWj5wA/edit?usp=sharing)
+The `build-image.sh` script uses `docker buildx` to create images for both `linux/amd64` and `linux/arm64` architectures.
+
+**Why multi-arch images must be pushed (cannot be loaded locally):**
+
+Docker buildx creates a manifest list containing images for multiple platforms. This manifest format is only supported in registries - it cannot be loaded into the local Docker daemon because the local daemon can only hold a single-platform image. The `--push` flag is required for multi-platform builds.
+
+**If you need to load the image locally for testing:**
+
+Use the `--load` flag instead and build for your machine's architecture only:
+
+```bash
+# For ARM64 (Apple Silicon Macs)
+docker buildx build --platform linux/arm64 -t tech4dev/superset:4.0.1 --load .
+
+# For AMD64 (Intel/AMD machines)
+docker buildx build --platform linux/amd64 -t tech4dev/superset:4.0.1 --load .
+```
+
+## Row Level Security
+
+The custom `jinja_context.py` provides the `current_blob()` function for implementing Row Level Security.
+
+**Filter clause:**
+```sql
+coid = ('{{current_blob()}}'::json->>'coid')::integer
+```
+
+Apply this filter to the roles specified in the filter definition. For example, create a "Community Organizer" role for SNEHA.
+
+## Kubernetes vs Docker Compose
+
+This setup of creating a single base image is designed for our **Kubernetes deployment**. The base image is pushed to a registry and pulled by Kubernetes pods.
+
+**If you want to run Superset using Docker Compose**, see the branch:
+[setup-superset-using-docker-compose-pre-kubernetes](https://github.com/DalgoT4D/docker-superset/tree/setup-superset-using-docker-compose-pre-kubernetes)
+
+## Documentation
+
+For detailed documentation on how we are customizing Superset for Dalgo, read:
+[Link to the documentation](https://docs.google.com/document/d/1l24tphe8iv1dQkIZ4s4xQIQu1vCB33YLCrjwSvWj5wA/edit?usp=sharing)
