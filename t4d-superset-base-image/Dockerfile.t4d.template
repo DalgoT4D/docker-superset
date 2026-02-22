@@ -46,8 +46,6 @@ RUN . /app/.venv/bin/activate && \
     && playwright install-deps \
     && PLAYWRIGHT_BROWSERS_PATH=/usr/local/share/playwright-browsers playwright install chromium
 
-
-
 # Switching back to using the `superset` user
 USER superset
 
