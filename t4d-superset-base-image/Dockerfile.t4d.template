@@ -29,6 +29,8 @@ RUN . /app/.venv/bin/activate && \
     uv pip install \
     # install psycopg2 for using PostgreSQL metadata store - could be a MySQL package if using that backend:
     psycopg2-binary pymssql sqlalchemy-bigquery pandas-gbq google-cloud-bigquery-storage flask_cors Flask-Mail asyncpg \
+    # clickhouse support
+    "clickhouse-connect>=0.13.0" \
       # packages needed for various Superset features:  
     google-auth python-dotenv urllib3 requests botocore python-dotenv redis celery flower pytz\
 
