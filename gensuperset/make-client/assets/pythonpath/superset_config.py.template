@@ -13,12 +13,14 @@ SQLALCHEMY_DATABASE_URI = os.environ["SQLALCHEMY_DATABASE_URI"]
 FEATURE_FLAGS = {
     "ENABLE_TEMPLATE_PROCESSING": True,
     "ALERT_REPORTS": True,
-    "DASHBOARD_CROSS_FILTERS": True,
+    "ALERT_REPORT_TABS": True,
     "DASHBOARD_RBAC": True,
     "DRILL_TO_DETAIL": True,
-    "HORIZONTAL_FILTER_BAR": True,
     "ESTIMATE_QUERY_COST": True,
     "SSH_TUNNELING": True,
+    "ENABLE_JAVASCRIPT_CONTROLS": True,
+    "PLAYWRIGHT_REPORTS_AND_THUMBNAILS": True,
+    "ALERT_REPORTS_NOTIFICATION_DRY_RUN": False,
 }
 
 # Default cache for Superset objects
@@ -121,6 +123,20 @@ SMTP_MAIL_FROM = os.environ["SMTP_MAIL_FROM"]
 SMTP_SSL_SERVER_AUTH = False
 
 WEBDRIVER_BASEURL = "http://{{WEBDRIVER_HOST}}"
+WEBDRIVER_BASEURL_USER_FRIENDLY = f"https://{os.environ['APPLICATION_HOST']}"
+
+WEBDRIVER_TYPE = "chrome"
+WEBDRIVER_OPTION_ARGS = [
+    "--force-device-scale-factor=2.0",
+    "--high-dpi-support=2.0",
+    "--headless",
+    "--disable-gpu",
+    "--disable-dev-shm-usage",
+    # required because the container runs as root for package installs
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--disable-extensions",
+]
 
 ENABLE_CORS = True
 CORS_OPTIONS = {
@@ -141,6 +157,8 @@ SESSION_COOKIE_SAMESITE = None
 SESSION_COOKIE_SECURE = False
 SUPERSET_FEATURE_EMBEDDED_SUPERSET = True
 HTML_SANITIZATION = False
+# Tiled screenshots for large dashboards (new in 6.0; requires Pillow, present in image)
+SCREENSHOT_TILED_ENABLED = True
 
 if os.getenv("ENABLE_OAUTH"):
     CSRF_ENABLED = True
@@ -213,10 +231,10 @@ TALISMAN_CONFIG = {
         "frame-ancestors": [
             "self",
             "http://localhost:3000",
-            "https://staging.dalgo.in",
             "https://staging.dalgo.org",
-            "https://dashboard.dalgo.in",
             "https://dashboard.dalgo.org",
+            "https://staging-app.dalgo.org",
+            "https://insights.dalgo.org",
         ],
     },
 }
