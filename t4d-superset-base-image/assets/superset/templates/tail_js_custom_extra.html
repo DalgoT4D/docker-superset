@@ -1,0 +1,17 @@
+{#
+  T4D: Dalgo custom.
+
+  Superset 6.x renders every page with superset/spa.html, which no longer
+  extends superset/basic.html or appbuilder/baselayout.html. This file is
+  included at the end of spa.html, so it is the supported place for the
+  locationStatus postMessage listener used when Superset is embedded in Dalgo.
+#}
+{% import "superset/macros.html" as t4d_macros %}
+<script nonce="{{ t4d_macros.get_nonce() }}">
+  window.addEventListener("message", function (event) {
+    const message = event.data;
+    if (message?.ask === "locationStatus") {
+      event.source.postMessage({ locationStatus: window.location.pathname }, event.origin);
+    }
+  });
+</script>
