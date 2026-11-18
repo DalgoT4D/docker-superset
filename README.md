@@ -10,7 +10,7 @@ docker-superset/
     ├── assets/
     │   └── superset/
     │       ├── jinja_context.py      # Custom Jinja functions (current_blob, etc.)
-    │       ├── templates/            # Custom HTML templates
+    │       ├── templates/            # tail_js_custom_extra.html (locationStatus listener)
     │       └── daos/                 # Custom data access objects
     ├── Dockerfile.t4d.template       # Docker template file
     └── generate-make-t4d.sh          # Script to generate Dockerfile and build script
@@ -27,8 +27,18 @@ The `Dockerfile.t4d.template` takes a base Apache Superset image and:
 2. Installs Python packages (psycopg2, Authlib, Playwright, etc.)
 3. Copies custom assets:
    - `jinja_context.py` - Provides custom Jinja functions like `current_blob()` for Row Level Security
-   - `templates/` - Custom HTML templates for UI modifications
+   - `templates/tail_js_custom_extra.html` - `locationStatus` postMessage listener for Dalgo embedding
    - `daos/` - Custom data access objects
+
+### Upgrading the Superset version
+
+`jinja_context.py` and `daos/log.py` are full copies of upstream Superset files and **overwrite** the ones in the base image. They must match the Superset version you build from. When upgrading:
+
+1. Take the files from the new Superset release tag (`superset/jinja_context.py`, `superset/daos/log.py`).
+2. Re-apply the Dalgo changes, which are marked with `T4D: Dalgo custom`:
+   - `jinja_context.py`: `current_blob()` method, its entry in the `ExtraCache.regex` cache-key pattern, and its entry in the Jinja context.
+   - `daos/log.py`: timezone-aware `time_delta` in `get_recent_activity`.
+3. `templates/tail_js_custom_extra.html` is an official extension point (included by `spa.html`) and normally needs no change.
 
 ### Generate and Build
 
@@ -39,7 +49,7 @@ cd t4d-superset-base-image
 sh generate-make-t4d.sh <base_image> <output_image>
 
 # Example:
-sh generate-make-t4d.sh "apache/superset:4.0.1" "tech4dev/superset:4.0.1"
+sh generate-make-t4d.sh "apache/superset:6.1.0" "tech4dev/superset:6.1.0-v2"
 ```
 
 This generates:
